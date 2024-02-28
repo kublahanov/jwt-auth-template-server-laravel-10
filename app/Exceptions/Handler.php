@@ -8,21 +8,26 @@ use Throwable;
 class Handler extends ExceptionHandler
 {
     /**
-     * The list of the inputs that are never flashed to the session on validation exceptions.
+     * A map of exceptions with their corresponding custom log levels.
      *
-     * @var array<int, string>
+     * @var array<class-string<\Throwable>, \Psr\Log\LogLevel::*>
      */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
+    protected $levels = [];
+
+    /**
+     * A list of the exception types that are not reported.
+     *
+     * @var array<int, class-string<\Throwable>>
+     */
+    protected $dontReport = [];
 
     /**
      * Register the exception handling callbacks for the application.
      */
     public function register(): void
     {
+        // $this->stopIgnoring(HttpException::class);
+
         $this->reportable(function (Throwable $e) {
             //
         });

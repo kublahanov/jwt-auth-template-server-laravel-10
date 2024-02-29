@@ -1,6 +1,16 @@
 <?php
 
+$usersTablesPrefix = '_users_';
+
 return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Prefix for tables associated with the user's table.
+    |--------------------------------------------------------------------------
+    */
+
+    'users_tables_prefix' => $usersTablesPrefix,
 
     /*
     |--------------------------------------------------------------------------
@@ -93,7 +103,7 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => 'password_reset_tokens',
+            'table' => $usersTablesPrefix . 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

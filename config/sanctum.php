@@ -2,7 +2,17 @@
 
 use Laravel\Sanctum\Sanctum;
 
+$tablesPrefix = '_sanctum_';
+
 return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Table name for personal access tokens.
+    |--------------------------------------------------------------------------
+    */
+
+    'personal_access_tokens_table_name' => $tablesPrefix . 'tokens',
 
     /*
     |--------------------------------------------------------------------------

@@ -7,11 +7,24 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     * @var string
+     */
+    private $tableName;
+
+    /**
+     * Getting table name.
+     */
+    public function __construct()
+    {
+        $this->tableName =  config('sanctum.personal_access_tokens_table_name');
+    }
+
+    /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('personal_access_tokens', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
             $table->morphs('tokenable');
             $table->string('name');
@@ -28,6 +41,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('personal_access_tokens');
+        Schema::dropIfExists($this->tableName);
     }
 };

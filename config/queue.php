@@ -1,5 +1,7 @@
 <?php
 
+$tablesPrefix = '_';
+
 return [
 
     /*
@@ -36,7 +38,7 @@ return [
 
         'database' => [
             'driver' => 'database',
-            'table' => 'laravel_jobs',
+            'table' => $tablesPrefix . 'jobs',
             'queue' => 'default',
             'retry_after' => 90,
             'after_commit' => false,
@@ -86,7 +88,7 @@ return [
 
     'batching' => [
         'database' => env('DB_CONNECTION', 'mysql'),
-        'table' => 'job_batches',
+        'table' => $tablesPrefix . 'job_batches',
     ],
 
     /*
@@ -103,7 +105,7 @@ return [
     'failed' => [
         'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
         'database' => env('DB_CONNECTION', 'mysql'),
-        'table' => 'laravel_failed_jobs',
+        'table' => $tablesPrefix . 'jobs_failed',
     ],
 
 ];

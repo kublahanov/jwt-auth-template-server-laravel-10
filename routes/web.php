@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('login', fn() => print 'Login')->name('login');
+Route::get('register', fn() => print 'Register')->name('register');
+
+Route::get('example', fn() => view('example'))->name('example');

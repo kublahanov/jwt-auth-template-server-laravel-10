@@ -17,7 +17,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('login', fn() => print 'Login')->name('login');
-Route::get('register', fn() => print 'Register')->name('register');
+Route::get('/login', fn() => print 'Login')->name('login');
+Route::get('/register', fn() => print 'Register')->name('register');
 
-Route::get('example', fn() => view('example'))->name('example');
+/**
+ * Examples and tests.
+ */
+Route::get('/example', fn() => view('example'))->name('example');
+Route::get('/mailable', function () {
+    return new App\Mail\TestMail();
+});

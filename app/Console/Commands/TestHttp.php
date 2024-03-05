@@ -34,12 +34,14 @@ class TestHttp extends Command
 
         $startTime = Carbon::now();
 
-        $response = Http::get('http://example.com');
+        // $response = Http::get('http://example.com');
+        // file_put_contents('./resources/views/example.blade.php', $response->body());
+
+        $response = Http::get('http://example.com/users/1');
 
         $this->line("Статус: {$response->status()}");
+        $this->line("Ответ: {$response->body()}");
         $this->newLine();
-
-        file_put_contents('./resources/views/example.blade.php', $response->body());
 
         // $this->newLine();
         // $this->alert('alert'); // Жёлтый

@@ -31,11 +31,14 @@ class TestJob implements ShouldQueue
             'driver' => 'daily',
             'path' => storage_path('logs/queue.log'),
             'level' => 'info',
-            'days' => 14,
+            'days' => 3,
             'permission' => 0664,
         ]);
 
-        $log->info(random_int(0, 100));
+        $from = random_int(0, 100);
+        $to = random_int(0, 100);
+        $to2 = random_int(0, 100);
+        $log->info("$from :: $to :: $to2");
 
         sleep(5);
     }

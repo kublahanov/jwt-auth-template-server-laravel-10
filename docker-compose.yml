@@ -6,6 +6,7 @@ services:
             args:
                 WWWGROUP: '${WWWGROUP}'
         image: sail-8.3/app
+#        command: php artisan queue:work --max-time=3600 --sleep=3
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:

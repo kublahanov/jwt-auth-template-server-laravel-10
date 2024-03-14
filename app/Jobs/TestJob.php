@@ -7,6 +7,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class TestJob implements ShouldQueue
 {
@@ -25,6 +27,24 @@ class TestJob implements ShouldQueue
      */
     public function handle(): void
     {
-        sleep(3);
+        $log = Log::build([
+            'driver' => 'daily',
+            'path' => storage_path('logs/queue.log'),
+            'level' => 'info',
+            'days' => 14,
+            'permission' => 0664,
+        ]);
+
+        $log->info(random_int(0, 100));
+
+        sleep(5);
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        // Send user notification of failure, etc...
     }
 }

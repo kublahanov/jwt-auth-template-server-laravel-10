@@ -40,7 +40,8 @@ return [
             'driver' => 'database',
             'table' => $tablesPrefix . 'jobs',
             'queue' => 'default',
-            'retry_after' => 90,
+            'retry_after' => 120,
+            'timeout' => 90,
             'after_commit' => false,
         ],
 

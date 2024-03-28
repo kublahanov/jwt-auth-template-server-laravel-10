@@ -45,3 +45,10 @@ Artisan::command('x', function () {
         'box',
     );
 })->purpose('Display only user-defined commands');
+
+Artisan::command('api', function () {
+    $this->call('route:list', [
+        '--except-vendor',
+        '--path' => 'api',
+    ]);
+})->purpose('Display list of api routes');

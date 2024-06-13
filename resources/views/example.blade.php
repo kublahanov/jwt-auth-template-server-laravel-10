@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="ru">
 <head>
     <title>Example Domain</title>
 
@@ -12,7 +12,7 @@
         margin: 0;
         padding: 0;
         font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        
+
     }
     div {
         width: 600px;
@@ -32,7 +32,7 @@
             width: auto;
         }
     }
-    </style>    
+    </style>
 </head>
 
 <body>

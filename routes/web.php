@@ -13,23 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-//
-// Route::get('/login', fn() => print 'Login')->name('login');
-// Route::get('/register', fn() => print 'Register')->name('register');
-//
-// /**
-//  * Examples and tests.
-//  */
-// Route::get('/example', fn() => view('example'))->name('example');
-// Route::get('/mailable', function () {
-//     return new App\Mail\TestMail();
-// });
-
 Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+    // return ['Laravel' => app()->version()];
+    return view('welcome');
 });
 
-require __DIR__ . '/auth.php';
+/**
+ * Examples and tests.
+ */
+Route::get('/example', fn() => view('example'))->name('example');
+Route::get('/mailable', function () {
+    return new App\Mail\TestMail();
+});
+
+// require __DIR__ . '/auth.php';

@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TestController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,8 +15,37 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/**
+ * Вывод списка роутов АПИ в формате JSON.
+ */
+Route::get('/', function () {
+    $routes = collect(Route::getRoutes())
+        ->filter(function ($route) {
+            return str_starts_with($route->uri(), 'api');
+        })
+        ->map(function ($route) {
+            return [
+                'uri' => $route->uri(),
+                'methods' => $route->methods(),
+                'name' => $route->getName(),
+                'action' => $route->getActionName(),
+                'middleware' => $route->gatherMiddleware(),
+            ];
+        });
+
+    return response()->json($routes, 200, [], JSON_PRETTY_PRINT);
+});
+
 Route::get('/migrations', [TestController::class, 'migrations']);
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth',
+], function ($router) {
+    Route::get('me', [AuthController::class, 'me']);
+
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
 });

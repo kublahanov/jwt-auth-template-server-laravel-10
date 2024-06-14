@@ -38,10 +38,7 @@ Route::get('/', function () {
 
 Route::get('/migrations', [TestController::class, 'migrations']);
 
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'auth',
-], function ($router) {
+Route::prefix('auth')->group(function ($router) {
     Route::get('me', [AuthController::class, 'me']);
 
     Route::post('login', [AuthController::class, 'login']);

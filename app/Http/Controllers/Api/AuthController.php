@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\ApiController;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
-// use Validator;
 
 /**
  * AuthController.
@@ -27,17 +26,18 @@ class AuthController extends ApiController
     /**
      * Get a JWT via given credentials.
      *
+     * @param LoginRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->only('email', 'password');
+        $result = $request->authenticate();
 
-        if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized 2'], 401);
+        if ($result->error) {
+            return response()->json(['error' => $result->error], $result->status);
         }
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($result->token);
     }
 
     /**

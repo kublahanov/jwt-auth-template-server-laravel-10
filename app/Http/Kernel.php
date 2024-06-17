@@ -36,7 +36,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
 
-            \App\Http\Middleware\EncryptCookies::class,
+            // \App\Http\Middleware\EncryptCookies::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ],
 
@@ -56,16 +56,16 @@ class Kernel extends HttpKernel
     protected $middlewareAliases = [
         // 'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         // 'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
         // 'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
 
-        'base.auth' => \App\Http\Middleware\Authenticate::class,
-        'auth' => \App\Http\Middleware\MyAuthenticate::class,
-        // 'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'auth' => \App\Http\Middleware\Auth\NeedToBeAuthenticated::class,
+        'guest' => \App\Http\Middleware\Auth\NeedToBeGuest::class,
+
         'signed' => \App\Http\Middleware\ValidateSignature::class,
-        'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+        'verified' => \App\Http\Middleware\Auth\EnsureEmailIsVerified::class,
     ];
 
     /**

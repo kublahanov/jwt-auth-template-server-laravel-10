@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Exceptions\Auth\InvalidCredentialsException;
+use App\Exceptions\Auth\TooManyAttemptsException;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-use stdClass;
+use Tymon\JWTAuth\JWTGuard;
 
 /**
  * LoginRequest.
@@ -39,12 +41,12 @@ class LoginRequest extends FormRequest
     /**
      * Attempt to authenticate the request's credentials.
      *
-     * @return stdClass
+     * @return bool|string
+     * @throws InvalidCredentialsException
+     * @throws TooManyAttemptsException
      */
     public function authenticate()
     {
-        $result = new stdClass();
-
         $throttleKey = Str::transliterate(Str::lower($this->input('email')) . '|' . $this->ip());
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
@@ -52,25 +54,20 @@ class LoginRequest extends FormRequest
 
             $seconds = RateLimiter::availableIn($throttleKey);
 
-            $result->error = "Too many attempts (wait $seconds seconds)";
-            $result->status = 429;
-
-            return $result;
+            throw new TooManyAttemptsException("Too many attempts (wait $seconds second(s))");
         }
 
-        if (!$result->token = auth()->attempt($this->only('email', 'password'), true)) {
+        /* @var $auth JWTGuard */
+        $auth = auth();
+
+        if (!$token = $auth->attempt($this->only('email', 'password'), true)) {
             RateLimiter::hit($throttleKey);
 
-            $result->error = "Invalid credentials";
-            $result->status = 401;
-
-            return $result;
+            throw new InvalidCredentialsException();
         }
-
-        $result->error = false;
 
         RateLimiter::clear($throttleKey);
 
-        return $result;
+        return $token;
     }
 }

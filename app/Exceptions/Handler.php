@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -22,18 +23,6 @@ class Handler extends ExceptionHandler
     protected $dontReport = [];
 
     /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
-    {
-        // $this->stopIgnoring(HttpException::class);
-
-        $this->reportable(function (Throwable $e) {
-            //
-        });
-    }
-
-    /**
      * Get the default context variables for logging.
      *
      * @return array<string, mixed>
@@ -45,5 +34,60 @@ class Handler extends ExceptionHandler
         // return array_merge(parent::context(), [
         //     'foo' => 'bar',
         // ]);
+    }
+
+    /**
+     * Register the exception handling callbacks for the application.
+     */
+    public function register(): void
+    {
+        $this->stopIgnoring(HttpException::class);
+
+        $this->reportable(function (Throwable $e) {
+            //
+        });
+
+        $this->renderable(function (Throwable $e, $request) {
+            // if ($e instanceof ValidationException) {
+            //     return response()->json([
+            //         'error' => 'ValidationException',
+            //         'message' => $e->getMessage(),
+            //         'errors' => $e->errors(),
+            //     ], $e->status);
+            // }
+
+            // if ($e instanceof HttpException) {
+            //     return response()->json([
+            //         'error' => class_basename($e),
+            //         'message' => $e->getMessage(),
+            //         'trace' => config('app.debug') ? $e->getTrace() : [],
+            //     ], $e->getStatusCode());
+            // }
+
+            // if ($e instanceof HttpResponseException) {
+            //     return response()->json([
+            //         'error' => class_basename($e),
+            //         'message' => $e->getMessage(),
+            //         'trace' => config('app.debug') ? $e->getTrace() : [],
+            //     ], $e->getResponse()->getStatusCode());
+            // }
+
+            // dump($e);
+            // dd($e instanceof AuthException);
+
+            if ($e instanceof AuthException) {
+                return response()->json([
+                    'error' => class_basename($e),
+                    'message' => $e->getMessage(),
+                    'data' => $request->all(),
+                ], $e->getCode());
+            }
+
+            return response()->json([
+                'error' => class_basename($e),
+                'message' => $e->getMessage(),
+                'trace' => config('app.debug') ? $e->getTrace() : [],
+            ], $e->getCode());
+        });
     }
 }

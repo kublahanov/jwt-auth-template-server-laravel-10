@@ -31,13 +31,7 @@ class AuthController extends ApiController
      */
     public function login(LoginRequest $request)
     {
-        $result = $request->authenticate();
-
-        if ($result->error) {
-            return response()->json(['error' => $result->error], $result->status);
-        }
-
-        return $this->respondWithToken($result->token);
+        return $this->respondWithToken($request->authenticate());
     }
 
     /**

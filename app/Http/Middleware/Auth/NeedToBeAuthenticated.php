@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Auth;
 
+use App\Exceptions\Auth\NeedToBeAuthenticatedException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +14,7 @@ class NeedToBeAuthenticated
     public function handle(Request $request, \Closure $next, $guard)
     {
         if (Auth::guard($guard)->guest()) {
-            return response()->json(['error' => 'Need to be authenticated (middleware)'], 401);
+            throw new NeedToBeAuthenticatedException();
         }
 
         return $next($request);

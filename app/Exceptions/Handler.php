@@ -22,7 +22,9 @@ class Handler extends ExceptionHandler
      *
      * @var array<int, class-string<\Throwable>>
      */
-    protected $dontReport = [];
+    protected $dontReport = [
+        AuthException::class,
+    ];
 
     /**
      * Get the default context variables for logging.

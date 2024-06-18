@@ -23,7 +23,7 @@ class AuthController extends ApiController
      *
      * @return void
      */
-    public function __construct(protected AuthServiceInterface $authService, protected JWTGuard $auth)
+    public function __construct(protected AuthServiceInterface $authService)
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
@@ -77,7 +77,10 @@ class AuthController extends ApiController
      */
     public function me(): JsonResponse
     {
-        return response()->json($this->auth->user());
+        /* @var $auth JWTGuard */
+        $auth = auth();
+
+        return response()->json($auth->user());
     }
 
     /**
@@ -87,7 +90,10 @@ class AuthController extends ApiController
      */
     public function logout(): JsonResponse
     {
-        $this->auth->logout();
+        /* @var $auth JWTGuard */
+        $auth = auth();
+
+        $auth->logout();
 
         return response()->json([
             'message' => 'Successfully logged out',
@@ -101,7 +107,10 @@ class AuthController extends ApiController
      */
     public function refresh(): JsonResponse
     {
-        return $this->respondWithToken($this->auth->refresh());
+        /* @var $auth JWTGuard */
+        $auth = auth();
+
+        return $this->respondWithToken($auth->refresh());
     }
 
     /**
@@ -112,10 +121,13 @@ class AuthController extends ApiController
      */
     protected function respondWithToken(string $token): JsonResponse
     {
+        /* @var $auth JWTGuard */
+        $auth = auth();
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => $this->auth->factory()->getTTL() * 60,
+            'expires_in' => $auth->factory()->getTTL() * 60,
         ]);
     }
 }

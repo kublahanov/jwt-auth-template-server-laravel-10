@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\Auth\InvalidCredentialsException;
+use App\Exceptions\Auth\TooManyAttemptsException;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Interfaces\AuthServiceInterface;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\JWTGuard;
 
 /**
  * AuthController.
@@ -18,7 +23,7 @@ class AuthController extends ApiController
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(protected AuthServiceInterface $authService, protected JWTGuard $auth)
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
@@ -27,85 +32,90 @@ class AuthController extends ApiController
      * Get a JWT via given credentials.
      *
      * @param LoginRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
+     * @throws InvalidCredentialsException
+     * @throws TooManyAttemptsException
      */
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
-        return $this->respondWithToken($request->authenticate());
+        return $this->respondWithToken($request->authenticate($this->authService));
     }
 
     /**
      * Register a User.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param RegisterRequest $request
+     * @return JsonResponse
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:' . (new User)->getTable(),
-            'password' => 'required|string|confirmed|min:6',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'name' => 'required|string|between:2,100',
+        //     'email' => 'required|string|email|max:100|unique:' . (new User)->getTable(),
+        //     'password' => 'required|string|confirmed|min:6',
+        // ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json($validator->errors(), 400);
+        // }
 
         $user = User::create(array_merge(
-            $validator->validated(),
-            ['password' => bcrypt($request->password)]
+            $request->only(['name', 'email']),
+            ['password' => bcrypt($request->get('password'))]
         ));
 
         return response()->json([
             'message' => 'User successfully registered',
             'user' => $user,
-        ], 201);
+        ], Response::HTTP_CREATED);
     }
 
     /**
      * Get the authenticated User.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function me()
+    public function me(): JsonResponse
     {
-        return response()->json(auth()->user());
+        return response()->json($this->auth->user());
     }
 
     /**
      * Log the user out (Invalidate the token).
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function logout()
+    public function logout(): JsonResponse
     {
-        auth()->logout();
+        $this->auth->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json([
+            'message' => 'Successfully logged out',
+        ], Response::HTTP_ACCEPTED);
     }
 
     /**
      * Refresh a token.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function refresh()
+    public function refresh(): JsonResponse
     {
-        return $this->respondWithToken(auth()->refresh());
+        return $this->respondWithToken($this->auth->refresh());
     }
 
     /**
      * Get the token array structure.
      *
      * @param string $token
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    protected function respondWithToken($token)
+    protected function respondWithToken(string $token): JsonResponse
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
+            'expires_in' => $this->auth->factory()->getTTL() * 60,
         ]);
     }
 }

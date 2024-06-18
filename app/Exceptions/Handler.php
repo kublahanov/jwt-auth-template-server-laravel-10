@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
@@ -48,14 +50,6 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (Throwable $e, $request) {
-            // if ($e instanceof ValidationException) {
-            //     return response()->json([
-            //         'error' => 'ValidationException',
-            //         'message' => $e->getMessage(),
-            //         'errors' => $e->errors(),
-            //     ], $e->status);
-            // }
-
             // if ($e instanceof HttpException) {
             //     return response()->json([
             //         'error' => class_basename($e),
@@ -72,9 +66,6 @@ class Handler extends ExceptionHandler
             //     ], $e->getResponse()->getStatusCode());
             // }
 
-            // dump($e);
-            // dd($e instanceof AuthException);
-
             if ($e instanceof AuthException) {
                 return response()->json([
                     'error' => class_basename($e),
@@ -83,11 +74,19 @@ class Handler extends ExceptionHandler
                 ], $e->getCode());
             }
 
+            if ($e instanceof ValidationException) {
+                return response()->json([
+                    'error' => 'ValidationException',
+                    'message' => $e->getMessage(),
+                    'errors' => $e->errors(),
+                ], $e->status);
+            }
+
             return response()->json([
                 'error' => class_basename($e),
                 'message' => $e->getMessage(),
                 'trace' => config('app.debug') ? $e->getTrace() : [],
-            ], $e->getCode());
+            ], ($e->getCode() > 0) ? $e->getCode() : Response::HTTP_INTERNAL_SERVER_ERROR);
         });
     }
 }

@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,9 +13,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * User.
  * @method static create(array $attributes = [])
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, MustVerifyEmailInterface
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, MustVerifyEmail;
 
     /**
      * The table associated with the model.

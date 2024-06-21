@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Exceptions\Auth\InvalidCredentialsException;
-use App\Exceptions\Auth\TooManyAttemptsException;
+use App\Exceptions\Auth\InvalidEmailVerificationException;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Interfaces\AuthServiceInterface;
 use App\Models\User;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\JWTGuard;
 
@@ -25,7 +26,10 @@ class AuthController extends ApiController
      */
     public function __construct(protected AuthServiceInterface $authService)
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => [
+            'login',
+            'register',
+        ]]);
     }
 
     /**
@@ -33,12 +37,13 @@ class AuthController extends ApiController
      *
      * @param LoginRequest $request
      * @return JsonResponse
-     * @throws InvalidCredentialsException
-     * @throws TooManyAttemptsException
+     * @throws AuthenticationException
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        return $this->respondWithToken($request->authenticate($this->authService));
+        return $this->authService->respondWithToken(
+            $this->authService->authenticate($request)
+        );
     }
 
     /**
@@ -49,25 +54,42 @@ class AuthController extends ApiController
      */
     public function register(RegisterRequest $request): JsonResponse
     {
-        // $validator = Validator::make($request->all(), [
-        //     'name' => 'required|string|between:2,100',
-        //     'email' => 'required|string|email|max:100|unique:' . (new User)->getTable(),
-        //     'password' => 'required|string|confirmed|min:6',
-        // ]);
+        $user = $this->authService->getNewUser($request->name, $request->email, $request->password);
 
-        // if ($validator->fails()) {
-        //     return response()->json($validator->errors(), 400);
-        // }
+        return $this->authService->respond(
+            'User registered successfully, please check your email for verification link',
+            $user,
+            Response::HTTP_CREATED
+        );
+    }
 
-        $user = User::create(array_merge(
-            $request->only(['name', 'email']),
-            ['password' => bcrypt($request->get('password'))]
-        ));
+    /**
+     * Email verification.
+     *
+     * @param Request $request
+     * @param $id
+     * @param $hash
+     * @return JsonResponse
+     */
+    public function verifyEmail(Request $request, $id, $hash): JsonResponse
+    {
+        /** @var User $user */
+        $user = User::findOrFail($id);
 
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user,
-        ], Response::HTTP_CREATED);
+        if (!hash_equals((string) $hash, sha1($user->email))) {
+            return $this->authService->respondWithException(
+                'Invalid verification link or signature',
+                InvalidEmailVerificationException::class
+            );
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return $this->authService->respond('Email already verified');
+        }
+
+        $user->markEmailAsVerified();
+
+        return $this->authService->respond('Email verified successfully');
     }
 
     /**
@@ -80,7 +102,10 @@ class AuthController extends ApiController
         /* @var $auth JWTGuard */
         $auth = auth();
 
-        return response()->json($auth->user());
+        return $this->authService->respond(
+            'Current user fetched successfully',
+            $auth->user()
+        );
     }
 
     /**
@@ -95,9 +120,10 @@ class AuthController extends ApiController
 
         $auth->logout();
 
-        return response()->json([
-            'message' => 'Successfully logged out',
-        ], Response::HTTP_ACCEPTED);
+        return $this->authService->respond(
+            'Successfully logged out',
+            status: Response::HTTP_ACCEPTED
+        );
     }
 
     /**
@@ -110,24 +136,8 @@ class AuthController extends ApiController
         /* @var $auth JWTGuard */
         $auth = auth();
 
-        return $this->respondWithToken($auth->refresh());
-    }
-
-    /**
-     * Get the token array structure.
-     *
-     * @param string $token
-     * @return JsonResponse
-     */
-    protected function respondWithToken(string $token): JsonResponse
-    {
-        /* @var $auth JWTGuard */
-        $auth = auth();
-
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => $auth->factory()->getTTL() * 60,
-        ]);
+        return $this->authService->respondWithToken(
+            $auth->refresh()
+        );
     }
 }

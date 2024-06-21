@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TestController;
+use App\Services\AuthService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 /**
- * Вывод списка роутов АПИ в формате JSON.
+ * Output routes list in JSON.
  */
 Route::get('/', function () {
     $routes = collect(Route::getRoutes())
@@ -39,10 +40,16 @@ Route::get('/', function () {
 Route::get('/migrations', [TestController::class, 'migrations']);
 
 Route::prefix('auth')->group(function ($router) {
-    Route::get('me', [AuthController::class, 'me']);
-
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('register', [AuthController::class, 'register'])
+        ->name(AuthService::AUTH_ROUTES_NAMES['register']);
+    Route::get('verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+        ->name(AuthService::AUTH_ROUTES_NAMES['verify-email']);
+    Route::post('login', [AuthController::class, 'login'])
+        ->name(AuthService::AUTH_ROUTES_NAMES['login']);
+    Route::get('me', [AuthController::class, 'me'])
+        ->name(AuthService::AUTH_ROUTES_NAMES['me']);
+    Route::post('logout', [AuthController::class, 'logout'])
+        ->name(AuthService::AUTH_ROUTES_NAMES['logout']);
+    Route::post('refresh', [AuthController::class, 'refresh'])
+        ->name(AuthService::AUTH_ROUTES_NAMES['refresh']);
 });

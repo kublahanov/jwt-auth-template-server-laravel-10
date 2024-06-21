@@ -12,6 +12,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 /**
  * User.
  * @method static create(array $attributes = [])
+ * @method static findOrFail($id)
+ * @property int $id
+ * @property string $email
  */
 class User extends Authenticatable implements JWTSubject, MustVerifyEmailInterface
 {

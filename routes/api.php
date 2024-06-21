@@ -43,6 +43,7 @@ Route::prefix('auth')->group(function ($router) {
     Route::post('register', [AuthController::class, 'register'])
         ->name(AuthService::AUTH_ROUTES_NAMES['register']);
     Route::get('verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+        ->middleware('signed')
         ->name(AuthService::AUTH_ROUTES_NAMES['verify-email']);
     Route::post('login', [AuthController::class, 'login'])
         ->name(AuthService::AUTH_ROUTES_NAMES['login']);

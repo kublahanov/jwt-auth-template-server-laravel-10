@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Exceptions\Auth\InvalidEmailVerificationException;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -29,6 +28,7 @@ class AuthController extends ApiController
         $this->middleware('auth:api', ['except' => [
             'login',
             'register',
+            'verifyEmail',
         ]]);
     }
 
@@ -68,20 +68,14 @@ class AuthController extends ApiController
      *
      * @param Request $request
      * @param $id
-     * @param $hash
      * @return JsonResponse
      */
-    public function verifyEmail(Request $request, $id, $hash): JsonResponse
+    public function verifyEmail(Request $request, $id): JsonResponse
     {
         /** @var User $user */
         $user = User::findOrFail($id);
 
-        if (!hash_equals((string) $hash, sha1($user->email))) {
-            return $this->authService->respondWithException(
-                'Invalid verification link or signature',
-                InvalidEmailVerificationException::class
-            );
-        }
+        $this->authService->checkVerificationHash($request);
 
         if ($user->hasVerifiedEmail()) {
             return $this->authService->respond('Email already verified');

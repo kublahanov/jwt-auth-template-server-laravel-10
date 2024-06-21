@@ -14,6 +14,8 @@ interface AuthServiceInterface
 
     public function getNewUser(string $userName, string $userEmail, string $userPassword): User;
 
+    public function checkVerificationHash(Request $request): void;
+
     public function respondWithToken(string $token): JsonResponse;
 
     public function respond(string $message, User $user = null, int $status = null): JsonResponse;

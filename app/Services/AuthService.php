@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\Auth\InvalidCredentialsException;
+use App\Exceptions\Auth\InvalidEmailVerificationException;
 use App\Exceptions\Auth\TooManyAttemptsException;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Interfaces\AuthServiceInterface;
@@ -124,6 +125,23 @@ class AuthService implements AuthServiceInterface
         RateLimiter::clear($throttleKey);
 
         return $token;
+    }
+
+    /**
+     * Check verification hash from email.
+     *
+     * @param Request $request
+     * @return void
+     * @throws AuthenticationException
+     */
+    public function checkVerificationHash(Request $request): void
+    {
+        if (!$request->hasValidSignature()) {
+            $this->respondWithException(
+                'Invalid verification link or signature',
+                InvalidEmailVerificationException::class
+            );
+        }
     }
 
     /**

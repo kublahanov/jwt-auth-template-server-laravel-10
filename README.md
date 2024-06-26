@@ -1,21 +1,7 @@
 <table>
 <tr style="border: none">
 <td style="border: none">
-<a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="320" alt="Laravel Logo" style="outline: 1px solid transparent"></a>
-</td>
-<td style="border: none; padding-right: 65px;">
-<a href="https://restfulapi.net" target="_blank"><img src="https://res.cloudinary.com/practicaldev/image/fetch/s--utGlBfsh--/c_imagga_scale,f_auto,fl_progressive,h_500,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/6yxtne4omqzoo24dvavn.png" width="180" alt="Laravel Logo" style="outline: 1px solid transparent"></a>
-</td>
-<td style="border: none">
-<a href="https://jwt-auth.readthedocs.io" target="_blank" style="outline: 1px solid transparent"><img src="https://seeklogo.com/images/J/jwt-logo-11B708E375-seeklogo.com.png" width="230" alt="Laravel Logo" style="outline: 1px solid transparent"></a>
-</td>
-</tr>
-</table>
-
-<table>
-<tr style="border: none">
-<td style="border: none">
-<a href="https://laravel.com" target="_blank"><img src="https://github.com/kublahanov/laravel-10-template/raw/master/public/logos/logo_laravel_001.png" alt="Laravel Logo"></a>
+<a href="https://laravel.com" target="_blank"><img src="https://github.com/kublahanov/laravel-10-template/raw/master/public/logos/logo_laravel_002.png" alt="Laravel Logo"></a>
 </td>
 <td style="border: none">
 <a href="https://restfulapi.net" target="_blank"><img src="https://github.com/kublahanov/laravel-10-template/raw/master/public/logos/logo_rest-api_001.png" alt="REST API"></a>

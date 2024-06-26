@@ -10,7 +10,7 @@ interface AuthServiceInterface
 {
     public function getThrottleKey(Request $request): string;
 
-    public function getVerificationUrl(int $userId, string $userEmail): string;
+    public function getVerificationUrl(User $user): string;
 
     public function getNewUser(string $userName, string $userEmail, string $userPassword): User;
 

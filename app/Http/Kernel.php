@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
 
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'verified' => \App\Http\Middleware\Auth\EnsureEmailIsVerified::class,
+        'decode.hash' => \App\Http\Middleware\Auth\DecodeHashParameter::class,
     ];
 
     /**

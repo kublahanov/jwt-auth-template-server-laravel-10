@@ -2,9 +2,9 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Messages\VerifyEmailMessage;
 use App\Services\AuthService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
@@ -35,16 +35,11 @@ class VerifyEmail extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(object $notifiable): VerifyEmailMessage
     {
-        return (new MailMessage)
+        return (new VerifyEmailMessage)
             ->subject(AuthService::VERIFICATION_EMAIL_SUBJECT)
-            ->greeting('Здравствуйте!')
-            ->line('Для завершения регистрации на сайте, необходимо подтвердить Ваш е-мейл.')
-            ->action('Подтвердить', url($this->verificationUrl))
-            ->line('Если это ошибка, и Вы не регистрировались на нашем сайте,' .
-                ' то никаких дальнейших действий не требуется.')
-            ->salutation('команда проекта «Вершки и корешки»!');
+            ->action('Подтвердить', url($this->verificationUrl));
     }
 
     /**

@@ -49,18 +49,17 @@ class AuthService implements AuthServiceInterface
     }
 
     /**
-     * @param int $userId
-     * @param string $userEmail
+     * @param User $user
      * @return string
      */
-    public function getVerificationUrl(int $userId, string $userEmail): string
+    public function getVerificationUrl(User $user): string
     {
         return URL::temporarySignedRoute(
             self::AUTH_ROUTES_NAMES['verify-email'],
             now()->addMinutes(self::VERIFICATION_URL_LIFE_TIME_IN_MINUTES),
             [
-                'id' => $userId,
-                'hash' => Hash::make($userEmail),
+                'id' => $user->id,
+                'hash' => urlencode(Hash::make($user->email)),
             ]
         );
     }
@@ -82,7 +81,7 @@ class AuthService implements AuthServiceInterface
 
         $user->notify(
             new VerifyEmail(
-                $this->getVerificationUrl($user->id, $user->email)
+                $this->getVerificationUrl($user)
             )
         );
 

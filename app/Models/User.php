@@ -13,6 +13,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * User.
  * @method static create(array $attributes = [])
  * @method static findOrFail($id)
+ * @method static first()
  * @property int $id
  * @property string $email
  */

@@ -37,7 +37,6 @@
 
 {{-- Salutation --}}
 @if (! empty($salutation))
-@lang('С уважением'),<br>
 {{ $salutation }}
 @else
 @lang('Regards'),<br>
@@ -48,13 +47,12 @@
 @isset($actionText)
 <x-slot:subcopy>
 @lang(
-    "Если возникли проблемы с кнопкой «:actionText», скопируйте ссылку ниже в Ваш браузер, и перейдите по ней.",
+    "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\n".
+    'into your web browser:',
     [
         'actionText' => $actionText,
     ]
-)
-<br>
-<span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }}).</span>
+) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
 </x-slot:subcopy>
 @endisset
 </x-mail::message>

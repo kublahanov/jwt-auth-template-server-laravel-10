@@ -12,6 +12,21 @@
 </tr>
 </table>
 
+<table>
+<tr style="border: none">
+<td style="border: none">
+<a href="https://laravel.com" target="_blank"><img src="/logos/logo_laravel_001.png" alt="Laravel Logo"></a>
+</td>
+<td style="border: none">
+<a href="https://restfulapi.net" target="_blank"><img src="/logos/logo_rest-api_001.png" alt="REST API"></a>
+</td>
+<td style="border: none">
+<a href="https://jwt-auth.readthedocs.io" target="_blank"><img src="/logos/logo_jwt_001.png" alt="JWT auth"></a>
+</td>
+</tr>
+</table>
+
+
 # Laravel 10 Template
 
 ![Laravel](https://img.shields.io/badge/Laravel-10.x-red)

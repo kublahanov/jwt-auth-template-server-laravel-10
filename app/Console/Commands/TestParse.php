@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Console\Command;
-use Exception;
 use Illuminate\Support\Carbon;
 
 /**
@@ -27,7 +26,7 @@ class TestParse extends Command
      * Execute the console command.
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $this->newLine();
         $this->alert($this->description);
@@ -37,7 +36,7 @@ class TestParse extends Command
         $directory = storage_path("/runtime/parse");
         $files = $this->getFilesList($directory);
 
-        dump($files);
+        // dump($files);
 
         $this->newLine();
 
@@ -46,18 +45,18 @@ class TestParse extends Command
             $this->line("Try to parse: $fullPath.");
 
             $this->line("YAML:");
-            try {
-                var_dump(yaml_parse_file($fullPath));
-            } catch (Exception $exception) {
-                $this->info($exception->getMessage());
-            }
+            // try {
+            //     var_dump(yaml_parse_file($fullPath));
+            // } catch (Exception $exception) {
+            //     $this->info($exception->getMessage());
+            // }
 
             $this->line("INI:");
-            try {
-                var_dump(parse_ini_file($fullPath));
-            } catch (Exception $exception) {
-                $this->info($exception->getMessage());
-            }
+            // try {
+            //     var_dump(parse_ini_file($fullPath));
+            // } catch (Exception $exception) {
+            //     $this->info($exception->getMessage());
+            // }
         }
 
         $this->newLine();
@@ -72,7 +71,7 @@ class TestParse extends Command
         // $this->warn('warn'); // Жёлтый
 
         $duration = (Carbon::now())->diffInSeconds($startTime);
-        $this->info("Время выполнения (сек.): {$duration}.");
+        $this->info("Время выполнения (сек.): $duration.");
 
         return 0;
     }
@@ -81,7 +80,7 @@ class TestParse extends Command
      * @param $directory
      * @return array|false
      */
-    protected function getFilesList($directory)
+    protected function getFilesList($directory): false|array
     {
         $fileList = [];
 

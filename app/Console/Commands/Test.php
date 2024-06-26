@@ -26,7 +26,7 @@ class Test extends Command
      * Execute the console command.
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $this->newLine();
         $this->alert($this->description);
@@ -71,7 +71,7 @@ class Test extends Command
         // );
 
         $duration = (Carbon::now())->diffInSeconds($startTime);
-        $this->info("Время выполнения (сек.): {$duration}.");
+        $this->info("Время выполнения (сек.): $duration.");
 
         return 0;
     }

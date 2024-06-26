@@ -27,7 +27,7 @@ class TestHttp extends Command
      * Execute the console command.
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $this->newLine();
         $this->alert($this->description);
@@ -53,7 +53,7 @@ class TestHttp extends Command
         // $this->warn('warn'); // Жёлтый
 
         $duration = (Carbon::now())->diffInSeconds($startTime);
-        $this->info("Время выполнения (сек.): {$duration}.");
+        $this->info("Время выполнения (сек.): $duration.");
 
         return 0;
     }

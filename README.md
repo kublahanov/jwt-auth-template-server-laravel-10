@@ -12,7 +12,6 @@
 </tr>
 </table>
 
-
 # Laravel 10 Template
 
 ![Laravel](https://img.shields.io/badge/Laravel-10.x-red)

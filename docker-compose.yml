@@ -4,14 +4,16 @@ services:
             context: ./docker/8.3
             dockerfile: Dockerfile
             args:
-                WWWGROUP: '${WWWGROUP}'
+                WWWGROUP: ${WWWGROUP:-1000}
+                WWWUSER: ${WWWUSER:-1000}
         image: sail-8.3/app
-#        command: php artisan queue:work --max-time=3600 --sleep=3
+            # command: php artisan queue:work --max-time=3600 --sleep=3
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
             - '${APP_PORT:-80}:80'
             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+            - 9003:9003 # XDebug
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1

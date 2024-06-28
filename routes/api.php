@@ -53,4 +53,7 @@ Route::prefix('auth')->group(function ($router) {
         ->name(AuthService::AUTH_ROUTES_NAMES['logout']);
     Route::post('refresh', [AuthController::class, 'refresh'])
         ->name(AuthService::AUTH_ROUTES_NAMES['refresh']);
+
+    Route::post('password/email', [AuthController::class, 'sendResetPasswordLink']);
+    Route::post('password/reset', [AuthController::class, 'resetPassword']);
 });

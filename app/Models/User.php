@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\MustVerifyEmail;
+use App\Notifications\ResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -19,7 +19,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  */
 class User extends Authenticatable implements JWTSubject, MustVerifyEmailInterface
 {
-    use HasFactory, Notifiable, MustVerifyEmail;
+    use HasFactory, Notifiable;
 
     /**
      * The table associated with the model.
@@ -77,5 +77,18 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmailInterfa
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param string $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(
+            new ResetPassword($token)
+        );
     }
 }

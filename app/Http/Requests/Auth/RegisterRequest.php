@@ -35,7 +35,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', "between:$this->minNameLength,$this->maxNameLength"],
-            'email' => ['required', 'string', 'email', "max:$this->maxEmailLength", 'unique:' . (new User)->getTable()],
+            'email' => ['required', 'email', "max:$this->maxEmailLength", 'unique:' . (new User)->getTable()],
             'password' => ['required', 'string', 'confirmed', "min:$this->minPasswordLength"],
         ];
     }

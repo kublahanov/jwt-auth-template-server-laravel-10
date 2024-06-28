@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\AuthService;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -7,16 +8,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * @var string
-     */
-    private $tableName;
-
-    /**
      * Getting table name.
      */
-    public function __construct()
+    public function __construct(private AuthService $authService)
     {
-        $this->tableName =  config('auth.users_tables_prefix') . 'password_reset_tokens';
     }
 
     /**
@@ -24,7 +19,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create($this->tableName, function (Blueprint $table) {
+        Schema::create($this->authService->getPasswordResetTokensTableName(), function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
@@ -36,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists($this->tableName);
+        Schema::dropIfExists($this->authService->getPasswordResetTokensTableName());
     }
 };

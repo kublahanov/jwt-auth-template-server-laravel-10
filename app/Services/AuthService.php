@@ -40,6 +40,14 @@ class AuthService implements AuthServiceInterface
     public const LOGIN_MAX_ATTEMPTS = 5;
 
     /**
+     * @return string
+     */
+    public function getPasswordResetTokensTableName(): string
+    {
+        return config('auth.users_tables_prefix') . 'password_reset_tokens';
+    }
+
+    /**
      * @param Request $request
      * @return string
      */

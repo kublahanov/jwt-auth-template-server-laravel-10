@@ -12,7 +12,7 @@
 </tr>
 </table>
 
-# Laravel 10 Template
+# Laravel 10 + JWT-auth REST API Template
 
 ![Laravel](https://img.shields.io/badge/Laravel-10.x-red)
 ![JWT Auth](https://img.shields.io/badge/JWT-Auth-blue)

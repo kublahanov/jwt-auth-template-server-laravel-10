@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TestController;
 use App\Services\AuthService;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Route as RouteAlias;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,22 +21,41 @@ use Illuminate\Support\Facades\Route;
 /**
  * Output routes list in JSON.
  */
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
     $routes = collect(Route::getRoutes())
-        ->filter(function ($route) {
+        ->filter(function (RouteAlias $route) {
             return str_starts_with($route->uri(), 'api');
         })
-        ->map(function ($route) {
-            return [
+        ->filter(function (RouteAlias $route) {
+            return !empty($route->getName());
+        })
+        ->map(function (RouteAlias $route) use ($request) {
+            $result = [
                 'uri' => $route->uri(),
-                'methods' => $route->methods(),
+                'methods' => implode(', ', $route->methods()),
                 'name' => $route->getName(),
                 'action' => $route->getActionName(),
-                'middleware' => $route->gatherMiddleware(),
+                'middleware' => implode(', ', $route->gatherMiddleware()),
             ];
-        });
 
-    return response()->json($routes, 200, [], JSON_PRETTY_PRINT);
+            if (!$request->has('json')) {
+                $result['link'] = in_array('GET', $route->methods())
+                    ? url($route->uri())
+                    : ''
+                ;
+            }
+
+            return $result;
+        })
+        ->keyBy('name')
+    ;
+
+    // return ($request->has('json'))
+    //     ? response()->view('api.list', ['routes' => $routes])
+    //     : response()->json($routes)
+    // ;
+
+    return response()->view('api.list', ['routes' => $routes]);
 });
 
 Route::get('/migrations', [TestController::class, 'migrations']);
@@ -45,15 +66,19 @@ Route::prefix('auth')->group(function ($router) {
     Route::get('verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])
         ->middleware(['signed', 'decode.hash'])
         ->name(AuthService::AUTH_ROUTES_NAMES['verify-email']);
+
     Route::post('login', [AuthController::class, 'login'])
         ->name(AuthService::AUTH_ROUTES_NAMES['login']);
-    Route::get('me', [AuthController::class, 'me'])
-        ->name(AuthService::AUTH_ROUTES_NAMES['me']);
     Route::post('logout', [AuthController::class, 'logout'])
         ->name(AuthService::AUTH_ROUTES_NAMES['logout']);
     Route::post('refresh', [AuthController::class, 'refresh'])
         ->name(AuthService::AUTH_ROUTES_NAMES['refresh']);
 
-    Route::post('password/email', [AuthController::class, 'sendResetPasswordLink']);
-    Route::post('password/reset', [AuthController::class, 'resetPassword']);
+    Route::get('me', [AuthController::class, 'me'])
+        ->name(AuthService::AUTH_ROUTES_NAMES['me']);
+
+    Route::post('send-reset-password-link', [AuthController::class, 'sendResetPasswordLink'])
+        ->name(AuthService::AUTH_ROUTES_NAMES['send-reset-password-link']);
+    Route::post('reset-password', [AuthController::class, 'resetPassword'])
+        ->name(AuthService::AUTH_ROUTES_NAMES['reset-password']);
 });

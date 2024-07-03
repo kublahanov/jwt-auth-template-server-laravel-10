@@ -21,7 +21,7 @@ Route::get('/', function () {
 /**
  * Examples and tests.
  */
-Route::get('/example', fn() => view('example'))->name('example');
+Route::get('/example', fn() => view('examples.example-domain'))->name('example');
 Route::get('/mailable', function () {
     return new App\Mail\TestMail();
 });

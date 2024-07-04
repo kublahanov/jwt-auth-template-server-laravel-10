@@ -13,33 +13,37 @@ endif;
         word-break: break-all;
         overflow-wrap: break-word;
     }
+
+    .w-900 {
+        width: 900px;
+    }
 </style>
 
 <x-layouts.index>
-    <x-laravel-top-menu>
-        <x-laravel-top-menu-link href="{{ url('/') }}">
+    <x-top-menu>
+        <x-top-menu-link href="{{ url('/') }}">
             Home
-        </x-laravel-top-menu-link>
+        </x-top-menu-link>
 
         @if (request()->has('json'))
-            <x-laravel-top-menu-link href="{{ url('/api') }}">
+            <x-top-menu-link href="{{ url('/api') }}">
                 HTML-format
-            </x-laravel-top-menu-link>
+            </x-top-menu-link>
         @else
-            <x-laravel-top-menu-link href="{{ url('/api') . '?json' }}">
+            <x-top-menu-link href="{{ url('/api') . '?json' }}">
                 JSON-format
-            </x-laravel-top-menu-link>
+            </x-top-menu-link>
         @endif
-    </x-laravel-top-menu>
+    </x-top-menu>
 
     <h1 class="text-xl font-bold my-6">
         API routes list
     </h1>
 
     @if (request()->has('json'))
-        <pre class="text-sm p-4 bg-slate-700 text-white rounded-lg" style="width: 900px"><?= $json ?></pre>
+        <pre class="w-900 text-sm p-4 bg-slate-700 text-white rounded-lg"><?= $json ?></pre>
     @else
-        <table class="border-collapse border text-sm" style="width: 900px">
+        <table class="w-900 border-collapse border text-sm">
             <thead>
             <tr>
                 <th class="text-left border border-slate-300 py-1 px-2 bg-gray-200">URI</th>
@@ -66,6 +70,4 @@ endif;
             </tbody>
         </table>
     @endif
-
-    <x-laravel-footer></x-laravel-footer>
 </x-layouts.index>

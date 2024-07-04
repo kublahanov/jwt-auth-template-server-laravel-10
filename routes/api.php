@@ -3,8 +3,6 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TestController;
 use App\Services\AuthService;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Route as RouteAlias;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,47 +17,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 /**
- * Output routes list in JSON.
+ * TODO: Test.
  */
-Route::get('/', function (Request $request) {
-    $routes = collect(Route::getRoutes())
-        ->filter(function (RouteAlias $route) {
-            return str_starts_with($route->uri(), 'api');
-        })
-        ->filter(function (RouteAlias $route) {
-            return !empty($route->getName());
-        })
-        ->map(function (RouteAlias $route) use ($request) {
-            $result = [
-                'uri' => $route->uri(),
-                'methods' => implode(', ', $route->methods()),
-                'name' => $route->getName(),
-                'action' => $route->getActionName(),
-                'middleware' => implode(', ', $route->gatherMiddleware()),
-            ];
-
-            if (!$request->has('json')) {
-                $result['link'] = in_array('GET', $route->methods())
-                    ? url($route->uri())
-                    : ''
-                ;
-            }
-
-            return $result;
-        })
-        ->keyBy('name')
-    ;
-
-    // return ($request->has('json'))
-    //     ? response()->view('api.list', ['routes' => $routes])
-    //     : response()->json($routes)
-    // ;
-
-    return response()->view('api.list', ['routes' => $routes]);
-});
-
 Route::get('/migrations', [TestController::class, 'migrations']);
 
+/**
+ * AuthController.
+ */
 Route::prefix('auth')->group(function ($router) {
     Route::post('register', [AuthController::class, 'register'])
         ->name(AuthService::AUTH_ROUTES_NAMES['register']);

@@ -17,9 +17,7 @@
             </span>
         </div>
     </div>
-    <div class="row">
-        <p class="mt-4 text-gray-500 text-sm leading-relaxed">
-            {{ $text }}
-        </p>
+    <div class="row pt-4 text-gray-500 text-sm leading-relaxed">
+        {{ $text }}
     </div>
 </a>

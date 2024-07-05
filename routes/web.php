@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RouteAlias;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,23 +40,37 @@ Route::get('/api', function (Request $request) {
                 'middleware' => implode(', ', $route->gatherMiddleware()),
             ];
 
-            if (!$request->has('json')) {
+            if (!$request->has('json') && !$request->isJson()) {
                 $result['link'] = in_array('GET', $route->methods())
                     ? url($route->uri())
-                    : ''
-                ;
+                    : '';
             }
 
             return $result;
         })
         ->keyBy('name')
-        ->sortKeys()
-    ;
+        ->sortKeys();
+
+    if ($request->has('only')) {
+        $onlyString = $request->get('only');
+        $onlyArray = Str::contains($onlyString, ',')
+            ? explode(',', $onlyString)
+            : [$onlyString];
+
+        $routes = $routes->filter(function (array $route) use ($onlyArray) {
+            foreach ($onlyArray as $item) {
+                if (str_starts_with($route['uri'], 'api/' . $item)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
 
     return ($request->isJson())
         ? response()->json($routes)
-        : response()->view('pages.api-list', ['routes' => $routes])
-    ;
+        : response()->view('pages.api-list', ['routes' => $routes]);
 });
 
 /**

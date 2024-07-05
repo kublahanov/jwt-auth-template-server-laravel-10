@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 /**
  * TODO: Test.
  */
-Route::get('/migrations', [TestController::class, 'migrations']);
+Route::get('/test/migrations', [TestController::class, 'migrations'])->name('test.migrations');
 
 /**
  * AuthController.

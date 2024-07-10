@@ -33,9 +33,11 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
+        $userTableName = User::getTableName();
+
         return [
             'name' => ['required', 'string', "between:$this->minNameLength,$this->maxNameLength"],
-            'email' => ['required', 'email', "max:$this->maxEmailLength", 'unique:' . (new User)->getTable()],
+            'email' => ['required', 'email', "max:$this->maxEmailLength", "unique:$userTableName"],
             'password' => ['required', 'string', 'confirmed', "min:$this->minPasswordLength"],
         ];
     }

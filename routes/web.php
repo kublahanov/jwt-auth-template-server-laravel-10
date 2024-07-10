@@ -25,12 +25,8 @@ Route::get('/', function () {
  */
 Route::get('/api', function (Request $request) {
     $routes = collect(Route::getRoutes())
-        ->filter(function (RouteAlias $route) {
-            return str_starts_with($route->uri(), 'api');
-        })
-        ->filter(function (RouteAlias $route) {
-            return !empty($route->getName());
-        })
+        ->filter(fn(RouteAlias $route) => str_starts_with($route->uri(), 'api'))
+        ->filter(fn(RouteAlias $route) => !empty($route->getName()))
         ->map(function (RouteAlias $route) use ($request) {
             $result = [
                 'uri' => $route->uri(),

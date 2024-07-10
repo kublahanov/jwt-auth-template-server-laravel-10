@@ -1,30 +1,17 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     /**
-     * @var string
-     */
-    private $tableName;
-
-    /**
-     * Getting table name.
-     */
-    public function __construct()
-    {
-        $user = new \App\Models\User();
-        $this->tableName = $user->getTable();
-    }
-
-    /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create($this->tableName, function (Blueprint $table) {
+        Schema::create(User::getTableName(), function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
@@ -40,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists($this->tableName);
+        Schema::dropIfExists(User::getTableName());
     }
 };

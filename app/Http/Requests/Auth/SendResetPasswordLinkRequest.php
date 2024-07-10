@@ -26,7 +26,7 @@ class SendResetPasswordLinkRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userTableName = (new User)->getTable();
+        $userTableName = User::getTableName();
 
         return [
             'email' => ['required', 'email', "exists:$userTableName,email"],

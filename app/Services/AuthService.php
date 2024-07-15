@@ -31,6 +31,8 @@ class AuthService implements AuthServiceInterface
         'me' => 'auth.me',
         'logout' => 'auth.logout',
         'refresh' => 'auth.refresh',
+        'send-reset-password-link' => 'auth.send-reset-password-link',
+        'reset-password' => 'auth.reset-password',
     ];
 
     public const VERIFICATION_URL_LIFE_TIME_IN_MINUTES = 60;
@@ -57,6 +59,7 @@ class AuthService implements AuthServiceInterface
     }
 
     /**
+     * @deprecated
      * @param User $user
      * @return string
      */
@@ -87,11 +90,7 @@ class AuthService implements AuthServiceInterface
             'password' => Hash::make($userPassword),
         ]);
 
-        $user->notify(
-            new VerifyEmail(
-                $this->getVerificationUrl($user)
-            )
-        );
+        $user->sendEmailVerificationNotification();
 
         return $user;
     }

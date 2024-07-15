@@ -26,10 +26,11 @@ class SendResetPasswordLinkRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userTableName = User::getTableName();
+        // $userTableName = User::getTableName();
 
         return [
-            'email' => ['required', 'email', "exists:$userTableName,email"],
+            // 'email' => ['required', 'email', "exists:$userTableName,email"],
+            'email' => ['required', 'email'],
         ];
     }
 }

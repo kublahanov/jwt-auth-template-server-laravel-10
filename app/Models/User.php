@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Notifications\ResetPassword;
+use App\Notifications\VerifyEmail;
 use App\Traits\GetModelTableName;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -81,6 +82,18 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmailInterfa
     }
 
     /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(
+            new VerifyEmail()
+        );
+    }
+
+    /**
      * Send the password reset notification.
      *
      * @param string $token
@@ -88,6 +101,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmailInterfa
      */
     public function sendPasswordResetNotification($token): void
     {
+        // dd('OKEY');
+
         $this->notify(
             new ResetPassword($token)
         );

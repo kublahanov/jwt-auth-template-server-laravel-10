@@ -32,6 +32,7 @@ class AuthController extends ApiController
             'login',
             'register',
             'verifyEmail',
+            'sendResetPasswordLink',
         ]]);
     }
 
@@ -165,6 +166,30 @@ class AuthController extends ApiController
         // Mail::to($request->email)->send(new PasswordResetMail($token));
 
         // return response()->json(['message' => 'Reset link sent']);
+
+        /*
+        // If not e-mail
+        {
+            "error": "ValidationException",
+            "message": "validation.email",
+            "errors": {
+                "email": [
+                    "validation.email"
+                ]
+            }
+        }
+
+        // If user not found by e-mail
+        {
+            "error": "ValidationException",
+            "message": "passwords.user",
+            "errors": {
+                "email": [
+                    "passwords.user"
+                ]
+            }
+        }
+        */
 
         $status = Password::sendResetLink(
             $request->only('email')

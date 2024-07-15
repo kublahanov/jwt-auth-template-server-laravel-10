@@ -41,7 +41,8 @@ class TestMail extends Command
         $user = User::first();
         $authService = new AuthService();
 
-        $user->notify(new VerifyEmail($authService->getVerificationUrl($user)));
+        // $user->notify(new VerifyEmail($authService->getVerificationUrl($user)));
+        $user->notify(new VerifyEmail('$authService->getVerificationUrl($user)'));
 
         $this->newLine();
         $duration = (Carbon::now())->diffInSeconds($startTime);

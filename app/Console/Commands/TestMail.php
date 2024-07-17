@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Console\Command;
 use App\Models\User;
 use App\Notifications\VerifyEmail;
-use App\Services\AuthService;
 use Illuminate\Support\Carbon;
 
 /**
@@ -39,10 +38,7 @@ class TestMail extends Command
         // $result = Mail::to(['nr.kondrashov@gmail.com', '4progs@inbox.ru'])->send(new \App\Mail\TestMail());
 
         $user = User::first();
-        $authService = new AuthService();
-
-        // $user->notify(new VerifyEmail($authService->getVerificationUrl($user)));
-        $user->notify(new VerifyEmail('$authService->getVerificationUrl($user)'));
+        $user->notify(new VerifyEmail());
 
         $this->newLine();
         $duration = (Carbon::now())->diffInSeconds($startTime);

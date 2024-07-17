@@ -2,6 +2,8 @@
 
 namespace App\Notifications;
 
+use Closure;
+use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Lang;
@@ -13,29 +15,29 @@ class ResetPassword extends Notification
      *
      * @var string
      */
-    public $token;
+    public string $token;
 
     /**
      * The callback that should be used to create the reset password URL.
      *
-     * @var (\Closure(mixed, string): string)|null
+     * @var (Closure(mixed, string): string)|null
      */
-    public static $createUrlCallback;
+    public static ?Closure $createUrlCallback;
 
     /**
      * The callback that should be used to build the mail message.
      *
-     * @var (\Closure(mixed, string): \Illuminate\Notifications\Messages\MailMessage|\Illuminate\Contracts\Mail\Mailable)|null
+     * @var (Closure(mixed, string): MailMessage|Mailable)|null
      */
-    public static $toMailCallback;
+    public static Mailable|Closure|null $toMailCallback;
 
     /**
      * Create a notification instance.
      *
-     * @param  string  $token
+     * @param string $token
      * @return void
      */
-    public function __construct($token)
+    public function __construct(string $token)
     {
         $this->token = $token;
     }
@@ -46,7 +48,7 @@ class ResetPassword extends Notification
      * @param  mixed  $notifiable
      * @return array|string
      */
-    public function via($notifiable)
+    public function via(mixed $notifiable): array|string
     {
         return ['mail'];
     }
@@ -55,9 +57,9 @@ class ResetPassword extends Notification
      * Build the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
-    public function toMail($notifiable)
+    public function toMail(mixed $notifiable): MailMessage
     {
         if (static::$toMailCallback) {
             return call_user_func(static::$toMailCallback, $notifiable, $this->token);
@@ -69,12 +71,13 @@ class ResetPassword extends Notification
     /**
      * Get the reset password notification mail message for the given URL.
      *
-     * @param  string  $url
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @param string $url
+     * @return MailMessage
      */
-    protected function buildMailMessage($url)
+    protected function buildMailMessage(string $url): MailMessage
     {
         return (new MailMessage)
+            // ->mailer('mailpit') // TODO: For test cases!
             ->subject(Lang::get('Reset Password Notification'))
             ->line(Lang::get('You are receiving this email because we received a password reset request for your account.'))
             ->action(Lang::get('Reset Password'), $url)
@@ -88,7 +91,7 @@ class ResetPassword extends Notification
      * @param  mixed  $notifiable
      * @return string
      */
-    protected function resetUrl($notifiable)
+    protected function resetUrl(mixed $notifiable): string
     {
         if (static::$createUrlCallback) {
             return call_user_func(static::$createUrlCallback, $notifiable, $this->token);
@@ -103,10 +106,10 @@ class ResetPassword extends Notification
     /**
      * Set a callback that should be used when creating the reset password button URL.
      *
-     * @param  \Closure(mixed, string): string  $callback
+     * @param Closure(mixed, string): string $callback
      * @return void
      */
-    public static function createUrlUsing($callback)
+    public static function createUrlUsing(Closure $callback): void
     {
         static::$createUrlCallback = $callback;
     }
@@ -114,10 +117,10 @@ class ResetPassword extends Notification
     /**
      * Set a callback that should be used when building the notification mail message.
      *
-     * @param  \Closure(mixed, string): (\Illuminate\Notifications\Messages\MailMessage|\Illuminate\Contracts\Mail\Mailable)  $callback
+     * @param Closure(mixed, string): (MailMessage|Mailable) $callback
      * @return void
      */
-    public static function toMailUsing($callback)
+    public static function toMailUsing(Closure $callback): void
     {
         static::$toMailCallback = $callback;
     }

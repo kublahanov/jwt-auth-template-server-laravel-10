@@ -94,6 +94,17 @@ return [
                 'postmark',
             ],
         ],
+
+        'mailpit' => [
+            'transport' => 'smtp',
+            'host' => 'mailpit',
+            'port' => 1025,
+            'encryption' => null,
+            'username' => null,
+            'password' => null,
+            'timeout' => null,
+        ],
+
     ],
 
     /*

@@ -38,6 +38,7 @@ class AuthService implements AuthServiceInterface
     public const VERIFICATION_URL_LIFE_TIME_IN_MINUTES = 60;
 
     public const VERIFICATION_EMAIL_SUBJECT = 'Вершки и корешки - Завершение регистрации';
+    public const RESET_PASSWORD_EMAIL_SUBJECT = 'Вершки и корешки - Сброс пароля';
 
     public const LOGIN_MAX_ATTEMPTS = 5;
 

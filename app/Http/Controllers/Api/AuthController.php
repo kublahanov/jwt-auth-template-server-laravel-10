@@ -142,52 +142,35 @@ class AuthController extends ApiController
     /**
      * Send a reset password link to the given user.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param SendResetPasswordLinkRequest $request
+     * @return JsonResponse
+     * @throws ValidationException
      */
-    public function sendResetPasswordLink(SendResetPasswordLinkRequest $request)
+    public function sendResetPasswordLink(SendResetPasswordLinkRequest $request): JsonResponse
     {
-        // Create a reset token
-        // $token = Str::random(60);
-
-        // Store the reset token in the database
-        // DB::table('password_resets')->updateOrInsert(
-        //     ['email' => $request->email],
-        //     ['token' => Hash::make($token), 'created_at' => now()]
-        // );
-
-        // $status = Password::sendResetLink(
-        //     $request->only('email')
-        // );
-
-        // Send reset link email
-        // You would use a mailer class here to send the email.
-        // For example, you could create a Mailable class and send it:
-        // Mail::to($request->email)->send(new PasswordResetMail($token));
-
-        // return response()->json(['message' => 'Reset link sent']);
-
         /*
-        // If not e-mail
+        Errors:
         {
             "error": "ValidationException",
-            "message": "validation.email",
+            ===
+            1. "message": "validation.email",
+            2. "message": "passwords.user",
+            3. "message": "passwords.throttled",
+            ===
             "errors": {
                 "email": [
-                    "validation.email"
+                    ===
+                    1. "validation.email" // If not e-mail
+                    2. "passwords.user" // PasswordBroker::INVALID_USER (If user not found by e-mail)
+                    3. "passwords.throttled" // PasswordBroker::RESET_THROTTLED (Token already exists?)
+                    ===
                 ]
             }
         }
 
-        // If user not found by e-mail
+        Success:
         {
-            "error": "ValidationException",
-            "message": "passwords.user",
-            "errors": {
-                "email": [
-                    "passwords.user"
-                ]
-            }
+            "status": "passwords.sent" // PasswordBroker::RESET_LINK_SENT (Success!)
         }
         */
 
@@ -195,13 +178,19 @@ class AuthController extends ApiController
             $request->only('email')
         );
 
-        if ($status != Password::RESET_LINK_SENT) {
+        /**
+         * TODO: Возможно стоит заменить собственными Exceptions.
+         */
+        if ($status !== Password::RESET_LINK_SENT) {
             throw ValidationException::withMessages([
-                'email' => [__($status)],
+                'email' => $status,
             ]);
         }
 
-        return response()->json(['status' => __($status)]);
+        return $this->authService->respond(
+            'Password reset link successfully sent',
+            status: Response::HTTP_ACCEPTED
+        );
     }
 
     /**
@@ -210,36 +199,36 @@ class AuthController extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function resetPassword(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'token' => 'required',
-            'password' => 'required|min:8|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $reset = DB::table('password_resets')->where('email', $request->email)->first();
-
-        if (!$reset || !Hash::check($request->token, $reset->token)) {
-            return response()->json(['message' => 'Invalid token'], 400);
-        }
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
-
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        // Delete the reset token
-        DB::table('password_resets')->where('email', $request->email)->delete();
-
-        return response()->json(['message' => 'Password reset successful']);
-    }
+    // public function resetPassword(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'email' => 'required|email',
+    //         'token' => 'required',
+    //         'password' => 'required|min:8|confirmed',
+    //     ]);
+    //
+    //     if ($validator->fails()) {
+    //         return response()->json(['errors' => $validator->errors()], 422);
+    //     }
+    //
+    //     $reset = DB::table('password_resets')->where('email', $request->email)->first();
+    //
+    //     if (!$reset || !Hash::check($request->token, $reset->token)) {
+    //         return response()->json(['message' => 'Invalid token'], 400);
+    //     }
+    //
+    //     $user = User::where('email', $request->email)->first();
+    //
+    //     if (!$user) {
+    //         return response()->json(['message' => 'User not found'], 404);
+    //     }
+    //
+    //     $user->password = Hash::make($request->password);
+    //     $user->save();
+    //
+    //     // Delete the reset token
+    //     DB::table('password_resets')->where('email', $request->email)->delete();
+    //
+    //     return response()->json(['message' => 'Password reset successful']);
+    // }
 }

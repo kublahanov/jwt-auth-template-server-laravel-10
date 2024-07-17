@@ -101,8 +101,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmailInterfa
      */
     public function sendPasswordResetNotification($token): void
     {
-        // dd('OKEY');
-
         $this->notify(
             new ResetPassword($token)
         );

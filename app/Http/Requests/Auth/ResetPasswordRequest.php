@@ -2,17 +2,14 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * RegisterRequest.
- * @property string $name
+ * ResetPasswordRequest.
  * @property string $email
- * @property string $password
  */
-class RegisterRequest extends FormRequest
+class ResetPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,11 +26,12 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userTableName = User::getTableName();
+        // $userTableName = User::getTableName();
 
         return [
-            'name' => ['required', 'string', 'between:' . AuthService::MIN_NAME_LENGTH . ',' . AuthService::MAX_NAME_LENGTH],
-            'email' => ['required', 'email', 'max:' . AuthService::MAX_EMAIL_LENGTH, "unique:$userTableName"],
+            // 'email' => ['required', 'email', "exists:$userTableName,email"],
+            'email' => ['required', 'email'],
+            'token' => ['required', 'string'],
             'password' => ['required', 'string', 'confirmed', 'min:' . AuthService::MIN_PASSWORD_LENGTH],
         ];
     }

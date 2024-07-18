@@ -41,6 +41,11 @@ class AuthService implements AuthServiceInterface
 
     public const LOGIN_MAX_ATTEMPTS = 5;
 
+    public const MIN_NAME_LENGTH = 2;
+    public const MAX_NAME_LENGTH = 100;
+    public const MAX_EMAIL_LENGTH = 100;
+    public const MIN_PASSWORD_LENGTH = 6;
+
     /**
      * @return string
      */

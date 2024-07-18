@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\SendResetPasswordLinkRequest;
 use App\Interfaces\AuthServiceInterface;
 use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\JWTGuard;
@@ -33,6 +37,7 @@ class AuthController extends ApiController
             'register',
             'verifyEmail',
             'sendResetPasswordLink',
+            'resetPassword',
         ]]);
     }
 
@@ -171,36 +176,56 @@ class AuthController extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    // public function resetPassword(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'email' => 'required|email',
-    //         'token' => 'required',
-    //         'password' => 'required|min:8|confirmed',
-    //     ]);
-    //
-    //     if ($validator->fails()) {
-    //         return response()->json(['errors' => $validator->errors()], 422);
-    //     }
-    //
-    //     $reset = DB::table('password_resets')->where('email', $request->email)->first();
-    //
-    //     if (!$reset || !Hash::check($request->token, $reset->token)) {
-    //         return response()->json(['message' => 'Invalid token'], 400);
-    //     }
-    //
-    //     $user = User::where('email', $request->email)->first();
-    //
-    //     if (!$user) {
-    //         return response()->json(['message' => 'User not found'], 404);
-    //     }
-    //
-    //     $user->password = Hash::make($request->password);
-    //     $user->save();
-    //
-    //     // Delete the reset token
-    //     DB::table('password_resets')->where('email', $request->email)->delete();
-    //
-    //     return response()->json(['message' => 'Password reset successful']);
-    // }
+    public function resetPassword(ResetPasswordRequest $request)
+    {
+        // if ($validator->fails()) {
+        //     return response()->json(['errors' => $validator->errors()], 422);
+        // }
+        //
+        // $reset = DB::table('password_resets')->where('email', $request->email)->first();
+        //
+        // if (!$reset || !Hash::check($request->token, $reset->token)) {
+        //     return response()->json(['message' => 'Invalid token'], 400);
+        // }
+        //
+        // $user = User::where('email', $request->email)->first();
+        //
+        // if (!$user) {
+        //     return response()->json(['message' => 'User not found'], 404);
+        // }
+        //
+        // $user->password = Hash::make($request->password);
+        // $user->save();
+        //
+        // // Delete the reset token
+        // DB::table('password_resets')->where('email', $request->email)->delete();
+        //
+        // return response()->json(['message' => 'Password reset successful']);
+
+        dd('OKAY');
+
+        // Here we will attempt to reset the user's password. If it is successful we
+        // will update the password on an actual user model and persist it to the
+        // database. Otherwise we will parse the error and return the response.
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
+                    // 'remember_token' => Str::random(60), // TODO: Зачем это?
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status != Password::PASSWORD_RESET) {
+            throw ValidationException::withMessages([
+                'email' => [__($status)],
+            ]);
+        }
+
+        return response()->json(['status' => __($status)]);
+    }
 }

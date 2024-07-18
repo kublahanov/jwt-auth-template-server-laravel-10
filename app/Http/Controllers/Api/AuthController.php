@@ -58,7 +58,7 @@ class AuthController extends ApiController
      */
     public function register(RegisterRequest $request): JsonResponse
     {
-        $user = $this->authService->getNewUser($request->name, $request->email, $request->password);
+        $user = $this->authService->getNewUser($request);
 
         return $this->authService->respond(
             'User registered successfully, please check your email for verification link',
@@ -148,35 +148,7 @@ class AuthController extends ApiController
      */
     public function sendResetPasswordLink(SendResetPasswordLinkRequest $request): JsonResponse
     {
-        /*
-        Errors:
-        {
-            "error": "ValidationException",
-            ===
-            1. "message": "validation.email",
-            2. "message": "passwords.user",
-            3. "message": "passwords.throttled",
-            ===
-            "errors": {
-                "email": [
-                    ===
-                    1. "validation.email" // If not e-mail
-                    2. "passwords.user" // PasswordBroker::INVALID_USER (If user not found by e-mail)
-                    3. "passwords.throttled" // PasswordBroker::RESET_THROTTLED (Token already exists?)
-                    ===
-                ]
-            }
-        }
-
-        Success:
-        {
-            "status": "passwords.sent" // PasswordBroker::RESET_LINK_SENT (Success!)
-        }
-        */
-
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $status = $this->authService->sendResetPasswordLink($request);
 
         /**
          * TODO: Возможно стоит заменить собственными Exceptions.

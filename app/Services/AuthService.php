@@ -6,16 +6,17 @@ use App\Exceptions\Auth\InvalidCredentialsException;
 use App\Exceptions\Auth\InvalidEmailVerificationException;
 use App\Exceptions\Auth\TooManyAttemptsException;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\SendResetPasswordLinkRequest;
 use App\Interfaces\AuthServiceInterface;
 use App\Models\User;
-use App\Notifications\VerifyEmail;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\JWTGuard;
 
@@ -34,8 +35,6 @@ class AuthService implements AuthServiceInterface
         'send-reset-password-link' => 'auth.send-reset-password-link',
         'reset-password' => 'auth.reset-password',
     ];
-
-    public const VERIFICATION_URL_LIFE_TIME_IN_MINUTES = 60;
 
     public const VERIFICATION_EMAIL_SUBJECT = 'Вершки и корешки - Завершение регистрации';
     public const RESET_PASSWORD_EMAIL_SUBJECT = 'Вершки и корешки - Сброс пароля';
@@ -60,35 +59,18 @@ class AuthService implements AuthServiceInterface
     }
 
     /**
-     * @deprecated
-     * @param User $user
-     * @return string
-     */
-    public function getVerificationUrl(User $user): string
-    {
-        return URL::temporarySignedRoute(
-            self::AUTH_ROUTES_NAMES['verify-email'],
-            now()->addMinutes(self::VERIFICATION_URL_LIFE_TIME_IN_MINUTES),
-            [
-                'id' => $user->id,
-                'hash' => urlencode(Hash::make($user->email)),
-            ]
-        );
-    }
-
-    /**
-     * @param string $userName
-     * @param string $userEmail
-     * @param string $userPassword
+     * New user registration.
+     *
+     * @param RegisterRequest $request
      * @return User
      */
-    public function getNewUser(string $userName, string $userEmail, string $userPassword): User
+    public function getNewUser(RegisterRequest $request): User
     {
         /** @var User $user */
         $user = User::create([
-            'name' => $userName,
-            'email' => $userEmail,
-            'password' => Hash::make($userPassword),
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
         $user->sendEmailVerificationNotification();
@@ -152,21 +134,42 @@ class AuthService implements AuthServiceInterface
     }
 
     /**
-     * Get the token array structure.
+     * Create and send password reset link.
      *
-     * @param string $token
-     * @return JsonResponse
+     * @param SendResetPasswordLinkRequest $request
+     * @return string
      */
-    public function respondWithToken(string $token): JsonResponse
+    public function sendResetPasswordLink(SendResetPasswordLinkRequest $request): string
     {
-        /* @var $auth JWTGuard */
-        $auth = auth();
+        /*
+        Errors:
+        {
+            "error": "ValidationException",
+            ===
+            1. "message": "validation.email",
+            2. "message": "passwords.user",
+            3. "message": "passwords.throttled",
+            ===
+            "errors": {
+                "email": [
+                    ===
+                    1. "validation.email" // If not e-mail
+                    2. "passwords.user" // PasswordBroker::INVALID_USER (If user not found by e-mail)
+                    3. "passwords.throttled" // PasswordBroker::RESET_THROTTLED (Token already exists?)
+                    ===
+                ]
+            }
+        }
 
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => $auth->factory()->getTTL() * 60,
-        ]);
+        Success:
+        {
+            "status": "passwords.sent" // PasswordBroker::RESET_LINK_SENT (Success!)
+        }
+        */
+
+        return Password::sendResetLink(
+            $request->only('email')
+        );
     }
 
     /**
@@ -190,6 +193,24 @@ class AuthService implements AuthServiceInterface
         return ($status)
             ? response()->json($data, $status)
             : response()->json($data);
+    }
+
+    /**
+     * Response with token.
+     *
+     * @param string $token
+     * @return JsonResponse
+     */
+    public function respondWithToken(string $token): JsonResponse
+    {
+        /* @var $auth JWTGuard */
+        $auth = auth();
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => $auth->factory()->getTTL() * 60,
+        ]);
     }
 
     /**

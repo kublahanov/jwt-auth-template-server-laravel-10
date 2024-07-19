@@ -9,16 +9,11 @@ use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\SendResetPasswordLinkRequest;
 use App\Interfaces\AuthServiceInterface;
 use App\Models\User;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use Tymon\JWTAuth\JWTGuard;
 
 /**
  * AuthController.
@@ -33,26 +28,12 @@ class AuthController extends ApiController
     public function __construct(protected AuthServiceInterface $authService)
     {
         $this->middleware('auth:api', ['except' => [
-            'login',
             'register',
             'verifyEmail',
+            'login',
             'sendResetPasswordLink',
             'resetPassword',
         ]]);
-    }
-
-    /**
-     * Get a JWT via given credentials.
-     *
-     * @param LoginRequest $request
-     * @return JsonResponse
-     * @throws AuthenticationException
-     */
-    public function login(LoginRequest $request): JsonResponse
-    {
-        return $this->authService->respondWithToken(
-            $this->authService->authenticate($request)
-        );
     }
 
     /**
@@ -96,18 +77,15 @@ class AuthController extends ApiController
     }
 
     /**
-     * Get the authenticated User.
+     * Get a JWT via given credentials.
      *
+     * @param LoginRequest $request
      * @return JsonResponse
      */
-    public function me(): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        /* @var $auth JWTGuard */
-        $auth = auth();
-
-        return $this->authService->respond(
-            'Current user fetched successfully',
-            $auth->user()
+        return $this->authService->respondWithToken(
+            $this->authService->authenticate($request)
         );
     }
 
@@ -118,10 +96,7 @@ class AuthController extends ApiController
      */
     public function logout(): JsonResponse
     {
-        /* @var $auth JWTGuard */
-        $auth = auth();
-
-        $auth->logout();
+        $this->authService->logout();
 
         return $this->authService->respond(
             'Successfully logged out',
@@ -136,11 +111,26 @@ class AuthController extends ApiController
      */
     public function refresh(): JsonResponse
     {
-        /* @var $auth JWTGuard */
-        $auth = auth();
+        $token = $this->authService->refreshToken();
 
         return $this->authService->respondWithToken(
-            $auth->refresh()
+            $token
+        );
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return JsonResponse
+     */
+    public function me(): JsonResponse
+    {
+        /* @var $user User */
+        $user = $this->authService->getCurrentUser();
+
+        return $this->authService->respond(
+            'Current user fetched successfully',
+            $user
         );
     }
 
@@ -173,59 +163,26 @@ class AuthController extends ApiController
     /**
      * Reset the given user's password.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param ResetPasswordRequest $request
+     * @return JsonResponse
+     * @throws ValidationException
      */
-    public function resetPassword(ResetPasswordRequest $request)
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
-        //
-        // $reset = DB::table('password_resets')->where('email', $request->email)->first();
-        //
-        // if (!$reset || !Hash::check($request->token, $reset->token)) {
-        //     return response()->json(['message' => 'Invalid token'], 400);
-        // }
-        //
-        // $user = User::where('email', $request->email)->first();
-        //
-        // if (!$user) {
-        //     return response()->json(['message' => 'User not found'], 404);
-        // }
-        //
-        // $user->password = Hash::make($request->password);
-        // $user->save();
-        //
-        // // Delete the reset token
-        // DB::table('password_resets')->where('email', $request->email)->delete();
-        //
-        // return response()->json(['message' => 'Password reset successful']);
+        $status = $this->authService->resetPassword($request);
 
-        dd('OKAY');
-
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
-
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->password),
-                    // 'remember_token' => Str::random(60), // TODO: Зачем это?
-                ])->save();
-
-                event(new PasswordReset($user));
-            }
-        );
-
-        if ($status != Password::PASSWORD_RESET) {
+        /**
+         * TODO: Возможно стоит заменить собственными Exceptions.
+         */
+        if ($status !== Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
-                'email' => [__($status)],
+                'email' => $status,
             ]);
         }
 
-        return response()->json(['status' => __($status)]);
+        return $this->authService->respond(
+            'Password reset successfully',
+            status: Response::HTTP_ACCEPTED
+        );
     }
 }

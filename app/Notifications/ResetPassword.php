@@ -78,7 +78,7 @@ class ResetPassword extends Notification
     protected function buildMailMessage(string $url): MailMessage
     {
         return (new ResetPasswordMessage())
-            ->mailer('mailpit') // TODO: For test cases!
+            // ->mailer('mailpit') // TODO: For test cases!
             ->subject(AuthService::RESET_PASSWORD_EMAIL_SUBJECT)
             ->action('Подтвердить', $url);
     }

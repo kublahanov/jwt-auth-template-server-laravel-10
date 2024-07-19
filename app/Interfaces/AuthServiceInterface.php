@@ -4,8 +4,10 @@ namespace App\Interfaces;
 
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\SendResetPasswordLinkRequest;
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -21,11 +23,19 @@ interface AuthServiceInterface
 
     public function getNewUser(RegisterRequest $request): User;
 
-    public function authenticate(LoginRequest $loginRequest): bool|string;
-
     public function checkVerificationHash(Request $request): void;
 
+    public function authenticate(LoginRequest $loginRequest): bool|string;
+
+    public function logout(): void;
+
+    public function refreshToken(): string;
+
+    public function getCurrentUser(): Authenticatable;
+
     public function sendResetPasswordLink(SendResetPasswordLinkRequest $request): string;
+
+    public function resetPassword(ResetPasswordRequest $request): string;
 
     /* Responses */
 

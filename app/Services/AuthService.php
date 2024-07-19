@@ -7,11 +7,19 @@ use App\Exceptions\Auth\InvalidEmailVerificationException;
 use App\Exceptions\Auth\TooManyAttemptsException;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\SendResetPasswordLinkRequest;
 use App\Interfaces\AuthServiceInterface;
 use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Events\Lockout;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -46,6 +54,8 @@ class AuthService implements AuthServiceInterface
     public const MAX_EMAIL_LENGTH = 100;
     public const MIN_PASSWORD_LENGTH = 6;
 
+    /* Utilities */
+
     /**
      * @return string
      */
@@ -63,7 +73,10 @@ class AuthService implements AuthServiceInterface
         return Str::transliterate(Str::lower($request->input('email')) . '|' . $request->ip());
     }
 
+    /* Methods */
+
     /**
+     * AuthController > register().
      * New user registration.
      *
      * @param RegisterRequest $request
@@ -80,10 +93,36 @@ class AuthService implements AuthServiceInterface
 
         $user->sendEmailVerificationNotification();
 
+        event(new Registered($user));
+
         return $user;
     }
 
     /**
+     * AuthController > verifyEmail().
+     * Check verification hash from email.
+     *
+     * @param Request $request
+     * @return void
+     * @throws AuthenticationException
+     */
+    public function checkVerificationHash(Request $request): void
+    {
+        if (!$request->hasValidSignature()) {
+            $this->respondWithException(
+                'Invalid verification link or signature',
+                InvalidEmailVerificationException::class
+            );
+        }
+
+        /* @var $auth JWTGuard|MustVerifyEmail */
+        $auth = auth();
+
+        event(new Verified($auth->user()));
+    }
+
+    /**
+     * AuthController > login().
      * Attempt to authenticate the request's credentials.
      *
      * @param LoginRequest $loginRequest
@@ -118,27 +157,57 @@ class AuthService implements AuthServiceInterface
 
         RateLimiter::clear($throttleKey);
 
+        event(new Login('api', $auth->user(), true));
+
         return $token;
     }
 
     /**
-     * Check verification hash from email.
+     * AuthController > logout().
+     * Attempt to users logout.
      *
-     * @param Request $request
      * @return void
-     * @throws AuthenticationException
      */
-    public function checkVerificationHash(Request $request): void
+    public function logout(): void
     {
-        if (!$request->hasValidSignature()) {
-            $this->respondWithException(
-                'Invalid verification link or signature',
-                InvalidEmailVerificationException::class
-            );
-        }
+        /* @var $auth JWTGuard */
+        $auth = auth();
+
+        $auth->logout();
+
+        event(new Logout('api', $auth->user()));
     }
 
     /**
+     * AuthController > refresh().
+     * Refresh user token.
+     *
+     * @return string
+     */
+    public function refreshToken(): string
+    {
+        /* @var $auth JWTGuard */
+        $auth = auth();
+
+        return $auth->refresh();
+    }
+
+    /**
+     * AuthController > me().
+     * Get the current user.
+     *
+     * @return Authenticatable
+     */
+    public function getCurrentUser(): Authenticatable
+    {
+        /* @var $auth JWTGuard */
+        $auth = auth();
+
+        return $auth->user();
+    }
+
+    /**
+     * AuthController > sendResetPasswordLink().
      * Create and send password reset link.
      *
      * @param SendResetPasswordLinkRequest $request
@@ -146,36 +215,47 @@ class AuthService implements AuthServiceInterface
      */
     public function sendResetPasswordLink(SendResetPasswordLinkRequest $request): string
     {
-        /*
-        Errors:
-        {
-            "error": "ValidationException",
-            ===
-            1. "message": "validation.email",
-            2. "message": "passwords.user",
-            3. "message": "passwords.throttled",
-            ===
-            "errors": {
-                "email": [
-                    ===
-                    1. "validation.email" // If not e-mail
-                    2. "passwords.user" // PasswordBroker::INVALID_USER (If user not found by e-mail)
-                    3. "passwords.throttled" // PasswordBroker::RESET_THROTTLED (Token already exists?)
-                    ===
-                ]
-            }
-        }
-
-        Success:
-        {
-            "status": "passwords.sent" // PasswordBroker::RESET_LINK_SENT (Success!)
-        }
-        */
+        /**
+         * Errors (ValidationException):
+         * 1. validation.email      // If not e-mail
+         * 2. passwords.user        // PasswordBroker::INVALID_USER (If user not found by e-mail)
+         * 3. passwords.throttled   // PasswordBroker::RESET_THROTTLED (Token already exists?)
+         */
 
         return Password::sendResetLink(
             $request->only('email')
         );
     }
+
+    /**
+     * AuthController > resetPassword().
+     * Reset users password.
+     *
+     * @param ResetPasswordRequest $request
+     * @return string
+     */
+    public function resetPassword(ResetPasswordRequest $request): string
+    {
+        /**
+         * Errors (ValidationException):
+         * 1. validation.email  // If not e-mail
+         * 2. passwords.user    // PasswordBroker::INVALID_USER (If user not found by e-mail)
+         * 3. passwords.token   // PasswordBroker::INVALID_TOKEN (Token is invalid)
+         */
+
+        return Password::reset(
+            $request->only('email', 'password', 'token'),
+            static function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+    }
+
+    /* Responses */
 
     /**
      * Standard response.

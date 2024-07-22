@@ -35,6 +35,7 @@ class RegisterRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'between:' . AuthService::MIN_NAME_LENGTH . ',' . AuthService::MAX_NAME_LENGTH],
             'email' => ['required', 'email', 'max:' . AuthService::MAX_EMAIL_LENGTH, "unique:$userTableName"],
+            // 'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'password' => ['required', 'string', 'confirmed', 'min:' . AuthService::MIN_PASSWORD_LENGTH],
         ];
     }

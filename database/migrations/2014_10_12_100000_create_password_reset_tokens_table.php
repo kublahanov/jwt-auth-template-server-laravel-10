@@ -7,11 +7,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    private AuthService $authService;
+
     /**
      * Getting table name.
      */
-    public function __construct(private AuthService $authService)
+    public function __construct()
     {
+        /**
+         * TODO: Move to Service Locator?
+         */
+        $this->authService = new AuthService();
     }
 
     /**

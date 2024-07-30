@@ -17,7 +17,8 @@
 ![Laravel](https://img.shields.io/badge/Laravel-10.x-red)
 ![JWT Auth](https://img.shields.io/badge/JWT-Auth-blue)
 
-This project is an extended version of the Laravel 10 source code designed to provide a template for JWT authentication-based REST API server applications with a full user authentication cycle.
+This project is an extended version of the Laravel 10 source code designed to provide a template for JWT
+authentication-based REST API server applications with a full user authentication cycle.
 
 ## About the Project
 
@@ -27,7 +28,8 @@ This is a starter template for developing REST API applications using Laravel 10
 
 - A clean REST API implementation.
 - Client JWT authentication with all necessary options: authentication with getting bearer token, token refreshing, etc.
-- User authentication, including: registration (with email verification), authentication (login and logout), password changing, and so on.
+- User authentication, including: registration (with email verification), authentication (login and logout), password
+  changing, and so on.
 
 ## Getting Started
 
@@ -36,10 +38,12 @@ These instructions will help you clone and run the project on your local machine
 ### Prerequisites
 
 Necessary:
+
 - PHP >= 8.1.
 - Composer.
- 
-On your choice: 
+
+On your choice:
+
 - MySQL or another supported database.
 - Or Docker for using [Laravel Sail](https://laravel.com/docs/10.x/sail).
 
@@ -152,8 +156,9 @@ For deploying on a production server, it is recommended to follow these steps:
 
 ### Contributing
 
-If you have suggestions for improving this project or want to report a bug, please open an issue or create a pull
-request.
+If you have suggestions for improving this project or want to report a bug, please open
+an [issue](/kublahanov/laravel-10-jwt-auth-template/issues) or create a [pull
+request](/kublahanov/laravel-10-jwt-auth-template/pulls).
 
 ### License
 

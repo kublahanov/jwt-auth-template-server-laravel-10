@@ -22,7 +22,7 @@ authentication-based REST API server applications with a full user authenticatio
 
 ## About the Project
 
-This is a starter template for developing REST API applications using Laravel 10.
+This is a starter template for developing REST API applications using Laravel 10 and JWT-auth.
 
 **It includes:**
 
@@ -39,13 +39,17 @@ These instructions will help you clone and run the project on your local machine
 
 Necessary:
 
-- PHP >= 8.1.
-- Composer.
+- [git](https://git-scm.com/)
+- [php8+](https://www.php.net/downloads)
+- [composer](https://getcomposer.org/download/)
 
-On your choice:
+Optional:
+
+- [docker](https://docs.docker.com/engine/install/)
+
+If not using [Laravel Sail](https://laravel.com/docs/10.x/sail):
 
 - MySQL or another supported database.
-- Or Docker for using [Laravel Sail](https://laravel.com/docs/10.x/sail).
 
 ### Installation
 
@@ -82,7 +86,7 @@ On your choice:
     php artisan migrate
     ```
 
-7. Start the local development server (or use [Laravel Sail](https://laravel.com/docs/10.x/sail) package):
+7. Start the local development server (or use [Laravel Sail](https://laravel.com/docs/10.x/sail)):
 
     ```bash
     php artisan serve

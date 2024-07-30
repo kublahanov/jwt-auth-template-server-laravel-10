@@ -157,8 +157,8 @@ For deploying on a production server, it is recommended to follow these steps:
 ### Contributing
 
 If you have suggestions for improving this project or want to report a bug, please open
-an [issue](/kublahanov/laravel-10-jwt-auth-template/issues) or create a [pull
-request](/kublahanov/laravel-10-jwt-auth-template/pulls).
+an [issue](https://github.com/kublahanov/laravel-10-jwt-auth-template/issues) or create a [pull
+request](https://github.com/kublahanov/laravel-10-jwt-auth-template/pulls).
 
 ### License
 

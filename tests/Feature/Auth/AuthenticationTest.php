@@ -7,7 +7,9 @@ use App\Services\AuthService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Testing\Concerns\AssertsStatusCodes;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
+use Tymon\JWTAuth\JWTGuard;
 
 class AuthenticationTest extends TestCase
 {
@@ -26,37 +28,68 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post(route(AuthService::AUTH_ROUTES_NAMES['login']), [
+        $response = $this->postJson(route(AuthService::AUTH_ROUTES_NAMES['login']), [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
         $response->assertOk();
+
+        $response->assertJson(fn(AssertableJson $json) => $json
+            ->has('access_token')
+            ->whereType('access_token', 'string')
+            ->where('token_type', 'bearer')
+            ->has('expires_in')
+            ->whereType('expires_in', 'integer')
+        );
+
+        $this->assertAuthenticated();
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
         $user = User::factory()->create();
 
-        $this->post(route(AuthService::AUTH_ROUTES_NAMES['login']), [
+        $response = $this->postJson(route(AuthService::AUTH_ROUTES_NAMES['login']), [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
 
+        $response->assertUnauthorized();
+
+        $response->assertJson(fn(AssertableJson $json) => $json
+            ->has('error')
+            ->where('error', 'InvalidCredentialsException')
+            ->has('message')
+            ->whereType('message', 'string')
+            ->etc()
+        );
+
         $this->assertGuest();
-        // $this->assertUnauthorized();
     }
 
     public function test_users_can_logout(): void
     {
         $user = User::factory()->create();
 
-        Auth::login($user);
+        /* @var $auth JWTGuard */
+        $auth = auth();
 
-        $response = $this->actingAs($user)->post(route(AuthService::AUTH_ROUTES_NAMES['logout']));
+        $token = $auth->login($user);
+
+        $response = $this
+            // ->actingAs($user)
+            ->withHeader('Authorization', 'Bearer ' . $token)
+            ->postJson(route(AuthService::AUTH_ROUTES_NAMES['logout']))
+        ;
+
+        $response->assertAccepted();
+
+        $response->assertJson(fn(AssertableJson $json) => $json
+            ->has('message')
+            ->whereType('message', 'string')
+        );
 
         $this->assertGuest();
-        $response->assertAccepted();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware\Auth;
 
 use App\Exceptions\Auth\NeedToBeAuthenticatedException;
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,7 +12,10 @@ use Illuminate\Support\Facades\Auth;
  */
 class NeedToBeAuthenticated
 {
-    public function handle(Request $request, \Closure $next, $guard)
+    /**
+     * @throws NeedToBeAuthenticatedException
+     */
+    public function handle(Request $request, Closure $next, $guard)
     {
         if (Auth::guard($guard)->guest()) {
             throw new NeedToBeAuthenticatedException();

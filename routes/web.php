@@ -67,7 +67,7 @@ Route::get('/api', function (Request $request) {
     return ($request->isJson())
         ? response()->json($routes)
         : response()->view('pages.api-list', ['routes' => $routes]);
-});
+})->name('api-list');
 
 /**
  * TODO: Examples and tests.

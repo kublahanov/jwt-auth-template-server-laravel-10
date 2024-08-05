@@ -5,7 +5,6 @@ namespace Tests\Feature\Auth;
 use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Testing\Concerns\AssertsStatusCodes;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
@@ -26,6 +25,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_authenticate_using_the_login_screen(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->postJson(route(AuthService::AUTH_ROUTES_NAMES['login']), [
@@ -48,6 +48,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->postJson(route(AuthService::AUTH_ROUTES_NAMES['login']), [
@@ -70,6 +71,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_logout(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
 
         /* @var $auth JWTGuard */

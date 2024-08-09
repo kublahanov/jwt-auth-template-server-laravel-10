@@ -4,7 +4,10 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use App\Services\AuthService;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Concerns\AssertsStatusCodes;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
@@ -28,10 +31,14 @@ class AuthenticationTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
 
+        Event::fake();
+
         $response = $this->postJson(route(AuthService::AUTH_ROUTES_NAMES['login']), [
             'email' => $user->email,
             'password' => 'password',
         ]);
+
+        Event::assertDispatched(Login::class);
 
         $response->assertOk();
 
@@ -51,10 +58,14 @@ class AuthenticationTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
 
+        Event::fake();
+
         $response = $this->postJson(route(AuthService::AUTH_ROUTES_NAMES['login']), [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
+
+        Event::assertNotDispatched(Login::class);
 
         $response->assertUnauthorized();
 
@@ -79,11 +90,15 @@ class AuthenticationTest extends TestCase
 
         $token = $auth->login($user);
 
+        Event::fake();
+
         $response = $this
             // ->actingAs($user)
             ->withHeader('Authorization', 'Bearer ' . $token)
             ->postJson(route(AuthService::AUTH_ROUTES_NAMES['logout']))
         ;
+
+        Event::assertDispatched(Logout::class);
 
         $response->assertAccepted();
 

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Throwable;
 
 class GuestRoutesTest extends TestCase
 {
@@ -14,6 +15,9 @@ class GuestRoutesTest extends TestCase
         $response->assertStatus(200);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function test_api_list_returns_a_successful_response(): void
     {
         $response = $this->getJson(route('api-list'));

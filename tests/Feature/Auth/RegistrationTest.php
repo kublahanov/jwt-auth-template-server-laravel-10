@@ -2,10 +2,13 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\User;
+use App\Notifications\VerifyEmail;
 use App\Services\AuthService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
@@ -19,15 +22,24 @@ class RegistrationTest extends TestCase
         $password = 'password';
 
         Event::fake();
+        Notification::fake();
 
-        $registerResponse = $this->postJson(route(AuthService::AUTH_ROUTES_NAMES['register']), [
-            'name' => 'Test User',
-            'email' => $email,
-            'password' => $password,
-            'password_confirmation' => $password,
-        ]);
+        $registerResponse = $this->postJson(
+            route(AuthService::AUTH_ROUTES_NAMES['register']),
+            [
+                'name' => 'Test User',
+                'email' => $email,
+                'password' => $password,
+                'password_confirmation' => $password,
+            ]
+        );
 
         Event::assertDispatched(Registered::class);
+
+        $userId = $registerResponse->json('user.id');
+        $user = User::findOrFail($userId);
+
+        Notification::assertSentTo($user, VerifyEmail::class);
 
         $registerResponse->assertCreated();
 

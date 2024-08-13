@@ -8,14 +8,13 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Testing\Concerns\AssertsStatusCodes;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 use Tymon\JWTAuth\JWTGuard;
 
 class AuthenticationTest extends TestCase
 {
-    use RefreshDatabase, AssertsStatusCodes;
+    use RefreshDatabase;
 
     protected AuthService $authService;
 
@@ -33,10 +32,13 @@ class AuthenticationTest extends TestCase
 
         Event::fake();
 
-        $response = $this->postJson(route(AuthService::AUTH_ROUTES_NAMES['login']), [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
+        $response = $this->postJson(
+            route(AuthService::AUTH_ROUTES_NAMES['login']),
+            [
+                'email' => $user->email,
+                'password' => 'password',
+            ]
+        );
 
         Event::assertDispatched(Login::class);
 
@@ -105,8 +107,37 @@ class AuthenticationTest extends TestCase
         $response->assertJson(fn(AssertableJson $json) => $json
             ->has('message')
             ->whereType('message', 'string')
+            ->where('message', 'Successfully logged out')
         );
 
         $this->assertGuest();
+    }
+
+    public function test_user_can_get_self_info(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /* @var $auth JWTGuard */
+        $auth = auth();
+
+        $token = $auth->login($user);
+
+        $this->assertAuthenticated();
+
+        $response = $this
+            ->withHeader('Authorization', 'Bearer ' . $token)
+            ->getJson(route(AuthService::AUTH_ROUTES_NAMES['me']))
+        ;
+
+        $response->assertOk();
+
+        $response->assertJson(fn(AssertableJson $json) => $json
+            ->has('message')
+            ->whereType('message', 'string')
+            ->where('message', 'Current user fetched successfully')
+            ->has('user')
+            ->whereType('user', 'array')
+        );
     }
 }

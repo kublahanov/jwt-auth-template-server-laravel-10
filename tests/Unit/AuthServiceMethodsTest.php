@@ -10,7 +10,7 @@ class AuthServiceMethodsTest extends TestCase
 {
     private AuthService $authService;
 
-    function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 

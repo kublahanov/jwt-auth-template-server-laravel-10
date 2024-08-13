@@ -29,7 +29,7 @@ class EmailVerificationTest extends TestCase
 
         Event::fake();
 
-        $verifyEmail = new VerifyEmail();
+        $verifyEmail = new VerifyEmail;
         $verificationUrl = TestHelper::invokeProtectedMethod($verifyEmail, 'verificationUrl', [$user]);
         $this->getJson($verificationUrl);
 

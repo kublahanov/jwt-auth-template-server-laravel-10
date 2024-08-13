@@ -17,7 +17,7 @@ return new class extends Migration
         /**
          * TODO: Move to Service Locator?
          */
-        $this->authService = new AuthService();
+        $this->authService = new AuthService;
     }
 
     /**

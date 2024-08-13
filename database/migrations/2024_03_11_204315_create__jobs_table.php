@@ -16,7 +16,7 @@ return new class extends Migration
      */
     public function __construct()
     {
-        $this->tableName =  config('queue.connections.database.table');
+        $this->tableName = config('queue.connections.database.table');
     }
 
     /**

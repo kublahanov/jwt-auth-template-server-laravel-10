@@ -14,18 +14,21 @@ class TestMail extends Command
 {
     /**
      * The name and signature of the console command.
+     *
      * @var string
      */
     protected $signature = 'test:mail';
 
     /**
      * The console command description.
+     *
      * @var string
      */
     protected $description = 'Тест Email-отправки';
 
     /**
      * Execute the console command.
+     *
      * @return int
      */
     public function handle(): int
@@ -38,7 +41,7 @@ class TestMail extends Command
         // $result = Mail::to(['nr.kondrashov@gmail.com', '4progs@inbox.ru'])->send(new \App\Mail\TestMail());
 
         $user = User::first();
-        $user->notify(new VerifyEmail());
+        $user->notify(new VerifyEmail);
 
         $this->newLine();
         $duration = (Carbon::now())->diffInSeconds($startTime);

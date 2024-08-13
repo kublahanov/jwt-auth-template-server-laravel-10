@@ -74,5 +74,5 @@ Route::get('/api', function (Request $request) {
  */
 Route::get('/example', fn() => view('examples.example-domain'))->name('example');
 Route::get('/mailable', function () {
-    return new App\Mail\TestMail();
+    return new App\Mail\TestMail;
 });

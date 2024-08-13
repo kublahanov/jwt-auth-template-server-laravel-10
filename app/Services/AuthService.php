@@ -265,7 +265,7 @@ class AuthService implements AuthServiceInterface
      * @param int|null $status
      * @return JsonResponse
      */
-    public function respond(string $message, User $user = null, int $status = null): JsonResponse
+    public function respond(string $message, ?User $user = null, ?int $status = null): JsonResponse
     {
         $data = [
             'message' => $message,
@@ -277,7 +277,8 @@ class AuthService implements AuthServiceInterface
 
         return ($status)
             ? response()->json($data, $status)
-            : response()->json($data);
+            : response()->json($data)
+        ;
     }
 
     /**
@@ -306,7 +307,7 @@ class AuthService implements AuthServiceInterface
      * @return null
      * @throws AuthenticationException
      */
-    public function respondWithException(string $message = 'Authentication exception', string $exceptionClass = null): null
+    public function respondWithException(string $message = 'Authentication exception', ?string $exceptionClass = null): null
     {
         if (!$exceptionClass || !class_exists($exceptionClass)) {
             $exceptionClass = AuthenticationException::class;

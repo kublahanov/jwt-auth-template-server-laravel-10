@@ -13,18 +13,21 @@ class TestHttp extends Command
 {
     /**
      * The name and signature of the console command.
+     *
      * @var string
      */
     protected $signature = 'test:http';
 
     /**
      * The console command description.
+     *
      * @var string
      */
     protected $description = 'Тест HTTP-клиента';
 
     /**
      * Execute the console command.
+     *
      * @return int
      */
     public function handle(): int

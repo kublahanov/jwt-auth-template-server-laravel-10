@@ -20,7 +20,7 @@ class AuthenticationTest extends TestCase
 
     public function __construct(string $name)
     {
-        $this->authService = new AuthService();
+        $this->authService = new AuthService;
 
         parent::__construct($name);
     }

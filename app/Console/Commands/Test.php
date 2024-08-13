@@ -12,18 +12,21 @@ class Test extends Command
 {
     /**
      * The name and signature of the console command.
+     *
      * @var string
      */
     protected $signature = 'test:index';
 
     /**
      * The console command description.
+     *
      * @var string
      */
     protected $description = 'Тест вывода в консольных командах';
 
     /**
      * Execute the console command.
+     *
      * @return int
      */
     public function handle(): int

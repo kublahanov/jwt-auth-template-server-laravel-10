@@ -13,18 +13,21 @@ class TestProcess extends Command
 {
     /**
      * The name and signature of the console command.
+     *
      * @var string
      */
     protected $signature = 'test:process';
 
     /**
      * The console command description.
+     *
      * @var string
      */
     protected $description = 'Тест выполнения процессов';
 
     /**
      * Execute the console command.
+     *
      * @return int
      */
     public function handle(): int

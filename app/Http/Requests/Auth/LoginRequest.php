@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * LoginRequest.
+ *
  * @property string $email
  * @property string $password
  */

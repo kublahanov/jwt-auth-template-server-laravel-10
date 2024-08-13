@@ -16,7 +16,7 @@ return new class extends Migration
      */
     public function __construct()
     {
-        $this->tableName =  config('queue.failed.table');
+        $this->tableName = config('queue.failed.table');
     }
 
     /**

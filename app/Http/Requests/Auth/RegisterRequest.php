@@ -8,6 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * RegisterRequest.
+ *
  * @property string $name
  * @property string $email
  * @property string $password

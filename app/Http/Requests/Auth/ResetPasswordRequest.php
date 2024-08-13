@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * ResetPasswordRequest.
+ *
  * @property string $email
  * @property string $token
  * @property string $password

@@ -29,8 +29,8 @@ Artisan::command('x', function () {
         })
         ->transform(function ($value, $key) {
             return [
-                "command" => $key,
-                "description" => $value->getDescription(),
+                'command' => $key,
+                'description' => $value->getDescription(),
             ];
         })
         ->toArray()

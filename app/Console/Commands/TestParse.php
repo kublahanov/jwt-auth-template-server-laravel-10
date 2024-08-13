@@ -12,18 +12,21 @@ class TestParse extends Command
 {
     /**
      * The name and signature of the console command.
+     *
      * @var string
      */
     protected $signature = 'test:parse';
 
     /**
      * The console command description.
+     *
      * @var string
      */
     protected $description = 'Тест парсера файлов';
 
     /**
      * Execute the console command.
+     *
      * @return int
      */
     public function handle(): int
@@ -33,7 +36,7 @@ class TestParse extends Command
 
         $startTime = Carbon::now();
 
-        $directory = storage_path("/runtime/parse");
+        $directory = storage_path('/runtime/parse');
         $files = $this->getFilesList($directory);
 
         // dump($files);
@@ -44,14 +47,14 @@ class TestParse extends Command
             $fullPath = "$directory/$fileName";
             $this->line("Try to parse: $fullPath.");
 
-            $this->line("YAML:");
+            $this->line('YAML:');
             // try {
             //     var_dump(yaml_parse_file($fullPath));
             // } catch (Exception $exception) {
             //     $this->info($exception->getMessage());
             // }
 
-            $this->line("INI:");
+            $this->line('INI:');
             // try {
             //     var_dump(parse_ini_file($fullPath));
             // } catch (Exception $exception) {

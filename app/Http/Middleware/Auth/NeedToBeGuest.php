@@ -18,7 +18,7 @@ class NeedToBeGuest
     public function handle(Request $request, Closure $next, $guard)
     {
         if (Auth::guard($guard)->check()) {
-            throw new NeedToBeGuestException();
+            throw new NeedToBeGuestException;
         }
 
         return $next($request);

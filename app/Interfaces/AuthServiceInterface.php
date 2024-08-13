@@ -39,9 +39,9 @@ interface AuthServiceInterface
 
     /* Responses */
 
-    public function respond(string $message, User $user = null, int $status = null): JsonResponse;
+    public function respond(string $message, ?User $user = null, ?int $status = null): JsonResponse;
 
     public function respondWithToken(string $token): JsonResponse;
 
-    public function respondWithException(string $message = 'Authentication exception', string $exceptionClass = null);
+    public function respondWithException(string $message = 'Authentication exception', ?string $exceptionClass = null);
 }

@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Models\User;
+// use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * SendResetPasswordLinkRequest.
+ *
  * @property string $email
  */
 class SendResetPasswordLinkRequest extends FormRequest

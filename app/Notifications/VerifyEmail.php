@@ -66,7 +66,7 @@ class VerifyEmail extends Notification
      */
     protected function buildMailMessage(string $url): MailMessage
     {
-        return (new VerifyEmailMessage)
+        return (new VerifyEmailMessage())
             // ->mailer('mailpit') // TODO: For test cases!
             ->subject(AuthService::VERIFICATION_EMAIL_SUBJECT)
             ->action('Подтвердить', $url);

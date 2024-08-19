@@ -5,8 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     private AuthService $authService;
 
     /**
@@ -17,7 +16,7 @@ return new class extends Migration
         /**
          * TODO: Move to Service Locator?
          */
-        $this->authService = new AuthService;
+        $this->authService = new AuthService();
     }
 
     /**

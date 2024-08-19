@@ -14,7 +14,7 @@ class AuthServiceMethodsTest extends TestCase
     {
         parent::setUp();
 
-        $this->authService = new AuthService;
+        $this->authService = new AuthService();
     }
 
     public function test_get_password_reset_tokens_table_name(): void

@@ -19,7 +19,7 @@ trait GetModelTableName
         $cacheTag = self::getTagName(__FUNCTION__);
 
         $mockModel = Cache::rememberForever($cacheTag, function () {
-            return new self;
+            return new self();
         });
 
         return $mockModel->getTable();

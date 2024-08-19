@@ -41,7 +41,7 @@ class TestMail extends Command
         // $result = Mail::to(['nr.kondrashov@gmail.com', '4progs@inbox.ru'])->send(new \App\Mail\TestMail());
 
         $user = User::first();
-        $user->notify(new VerifyEmail);
+        $user->notify(new VerifyEmail());
 
         $this->newLine();
         $duration = (Carbon::now())->diffInSeconds($startTime);

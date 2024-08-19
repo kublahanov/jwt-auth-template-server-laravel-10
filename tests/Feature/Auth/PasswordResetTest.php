@@ -23,7 +23,7 @@ class PasswordResetTest extends TestCase
 
     public function __construct(string $name)
     {
-        $this->authService = new AuthService;
+        $this->authService = new AuthService();
 
         parent::__construct($name);
     }
@@ -44,7 +44,8 @@ class PasswordResetTest extends TestCase
 
         $response->assertAccepted();
 
-        $response->assertJson(fn(AssertableJson $json) => $json
+        $response->assertJson(
+            fn (AssertableJson $json) => $json
             ->has('message')
             ->whereType('message', 'string')
             ->where('message', 'Password reset link successfully sent')
@@ -83,7 +84,8 @@ class PasswordResetTest extends TestCase
 
         $response->assertAccepted();
 
-        $response->assertJson(fn(AssertableJson $json) => $json
+        $response->assertJson(
+            fn (AssertableJson $json) => $json
             ->has('message')
             ->where('message', 'Password reset successfully')
         );

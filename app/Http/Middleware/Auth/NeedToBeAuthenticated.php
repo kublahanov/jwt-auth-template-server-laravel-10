@@ -18,7 +18,7 @@ class NeedToBeAuthenticated
     public function handle(Request $request, Closure $next, $guard)
     {
         if (Auth::guard($guard)->guest()) {
-            throw new NeedToBeAuthenticatedException;
+            throw new NeedToBeAuthenticatedException();
         }
 
         return $next($request);

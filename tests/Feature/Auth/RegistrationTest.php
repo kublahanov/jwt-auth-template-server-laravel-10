@@ -43,7 +43,8 @@ class RegistrationTest extends TestCase
 
         $registerResponse->assertCreated();
 
-        $registerResponse->assertJson(fn(AssertableJson $json) => $json
+        $registerResponse->assertJson(
+            fn (AssertableJson $json) => $json
             ->has('message')
             ->whereType('message', 'string')
             ->has('user')

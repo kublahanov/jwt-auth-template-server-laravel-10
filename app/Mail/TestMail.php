@@ -12,7 +12,8 @@ use Illuminate\Queue\SerializesModels;
 // class TestMail extends Mailable implements ShouldQueue
 class TestMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.

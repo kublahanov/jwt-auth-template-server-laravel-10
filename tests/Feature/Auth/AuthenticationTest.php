@@ -20,7 +20,7 @@ class AuthenticationTest extends TestCase
 
     public function __construct(string $name)
     {
-        $this->authService = new AuthService;
+        $this->authService = new AuthService();
 
         parent::__construct($name);
     }
@@ -44,7 +44,8 @@ class AuthenticationTest extends TestCase
 
         $response->assertOk();
 
-        $response->assertJson(fn(AssertableJson $json) => $json
+        $response->assertJson(
+            fn (AssertableJson $json) => $json
             ->has('access_token')
             ->whereType('access_token', 'string')
             ->where('token_type', 'bearer')
@@ -71,7 +72,8 @@ class AuthenticationTest extends TestCase
 
         $response->assertUnauthorized();
 
-        $response->assertJson(fn(AssertableJson $json) => $json
+        $response->assertJson(
+            fn (AssertableJson $json) => $json
             ->has('error')
             ->where('error', 'InvalidCredentialsException')
             ->has('message')
@@ -104,7 +106,8 @@ class AuthenticationTest extends TestCase
 
         $response->assertAccepted();
 
-        $response->assertJson(fn(AssertableJson $json) => $json
+        $response->assertJson(
+            fn (AssertableJson $json) => $json
             ->has('message')
             ->whereType('message', 'string')
             ->where('message', 'Successfully logged out')
@@ -132,7 +135,8 @@ class AuthenticationTest extends TestCase
 
         $response->assertOk();
 
-        $response->assertJson(fn(AssertableJson $json) => $json
+        $response->assertJson(
+            fn (AssertableJson $json) => $json
             ->has('message')
             ->whereType('message', 'string')
             ->where('message', 'Current user fetched successfully')

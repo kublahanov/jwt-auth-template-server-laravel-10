@@ -23,7 +23,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  */
 class User extends Authenticatable implements JWTSubject, MustVerifyEmailInterface
 {
-    use GetModelTableName, HasFactory, Notifiable;
+    use GetModelTableName;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The table associated with the model.
@@ -91,7 +93,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmailInterfa
     public function sendEmailVerificationNotification(): void
     {
         $this->notify(
-            new VerifyEmail
+            new VerifyEmail()
         );
     }
 

@@ -25,8 +25,8 @@ Route::get('/', function () {
  */
 Route::get('/api', function (Request $request) {
     $routes = collect(Route::getRoutes())
-        ->filter(fn (RouteAlias $route) => str_starts_with($route->uri(), 'api'))
-        ->filter(fn (RouteAlias $route) => !empty($route->getName()))
+        ->filter(fn(RouteAlias $route) => str_starts_with($route->uri(), 'api'))
+        ->filter(fn(RouteAlias $route) => !empty($route->getName()))
         ->map(function (RouteAlias $route) use ($request) {
             $result = [
                 'uri' => $route->uri(),
@@ -72,7 +72,7 @@ Route::get('/api', function (Request $request) {
 /**
  * TODO: Examples and tests.
  */
-Route::get('/example', fn () => view('examples.example-domain'))->name('example');
+Route::get('/example', fn() => view('examples.example-domain'))->name('example');
 Route::get('/mailable', function () {
     return new App\Mail\TestMail();
 });

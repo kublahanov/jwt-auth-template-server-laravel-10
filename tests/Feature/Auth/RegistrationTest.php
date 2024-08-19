@@ -31,7 +31,7 @@ class RegistrationTest extends TestCase
                 'email' => $email,
                 'password' => $password,
                 'password_confirmation' => $password,
-            ]
+            ],
         );
 
         Event::assertDispatched(Registered::class);
@@ -44,11 +44,11 @@ class RegistrationTest extends TestCase
         $registerResponse->assertCreated();
 
         $registerResponse->assertJson(
-            fn (AssertableJson $json) => $json
+            fn(AssertableJson $json) => $json
             ->has('message')
             ->whereType('message', 'string')
             ->has('user')
-            ->whereType('user', 'array')
+            ->whereType('user', 'array'),
         );
 
         $loginResponse = $this->postJson(route(AuthService::AUTH_ROUTES_NAMES['login']), [

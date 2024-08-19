@@ -27,6 +27,6 @@ class AuthServiceProvider extends ServiceProvider
         /**
          * Разрешающий шлюз для администратора.
          */
-        Gate::before(fn (User $user, string $ability) => $user->isAdministrator());
+        Gate::before(fn(User $user, string $ability) => $user->isAdministrator());
     }
 }

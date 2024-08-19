@@ -39,16 +39,16 @@ class PasswordResetTest extends TestCase
             route(AuthService::AUTH_ROUTES_NAMES['send-reset-password-link']),
             [
                 'email' => $user->email,
-            ]
+            ],
         );
 
         $response->assertAccepted();
 
         $response->assertJson(
-            fn (AssertableJson $json) => $json
+            fn(AssertableJson $json) => $json
             ->has('message')
             ->whereType('message', 'string')
-            ->where('message', 'Password reset link successfully sent')
+            ->where('message', 'Password reset link successfully sent'),
         );
 
         Notification::assertSentTo($user, ResetPassword::class);
@@ -79,15 +79,15 @@ class PasswordResetTest extends TestCase
                 'password' => 'new_password',
                 'password_confirmation' => 'new_password',
                 'token' => $token,
-            ]
+            ],
         );
 
         $response->assertAccepted();
 
         $response->assertJson(
-            fn (AssertableJson $json) => $json
+            fn(AssertableJson $json) => $json
             ->has('message')
-            ->where('message', 'Password reset successfully')
+            ->where('message', 'Password reset successfully'),
         );
 
         Event::assertDispatched(PasswordReset::class);

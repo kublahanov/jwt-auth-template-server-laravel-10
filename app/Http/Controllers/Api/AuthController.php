@@ -49,7 +49,7 @@ class AuthController extends ApiController
         return $this->authService->respond(
             'User registered successfully, please check your email for verification link',
             $user,
-            Response::HTTP_CREATED
+            Response::HTTP_CREATED,
         );
     }
 
@@ -85,7 +85,7 @@ class AuthController extends ApiController
     public function login(LoginRequest $request): JsonResponse
     {
         return $this->authService->respondWithToken(
-            $this->authService->authenticate($request)
+            $this->authService->authenticate($request),
         );
     }
 
@@ -100,7 +100,7 @@ class AuthController extends ApiController
 
         return $this->authService->respond(
             'Successfully logged out',
-            status: Response::HTTP_ACCEPTED
+            status: Response::HTTP_ACCEPTED,
         );
     }
 
@@ -114,7 +114,7 @@ class AuthController extends ApiController
         $token = $this->authService->refreshToken();
 
         return $this->authService->respondWithToken(
-            $token
+            $token,
         );
     }
 
@@ -130,7 +130,7 @@ class AuthController extends ApiController
 
         return $this->authService->respond(
             'Current user fetched successfully',
-            $user
+            $user,
         );
     }
 
@@ -156,7 +156,7 @@ class AuthController extends ApiController
 
         return $this->authService->respond(
             'Password reset link successfully sent',
-            status: Response::HTTP_ACCEPTED
+            status: Response::HTTP_ACCEPTED,
         );
     }
 
@@ -182,7 +182,7 @@ class AuthController extends ApiController
 
         return $this->authService->respond(
             'Password reset successfully',
-            status: Response::HTTP_ACCEPTED
+            status: Response::HTTP_ACCEPTED,
         );
     }
 }

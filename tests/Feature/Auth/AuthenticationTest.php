@@ -37,7 +37,7 @@ class AuthenticationTest extends TestCase
             [
                 'email' => $user->email,
                 'password' => 'password',
-            ]
+            ],
         );
 
         Event::assertDispatched(Login::class);
@@ -45,12 +45,12 @@ class AuthenticationTest extends TestCase
         $response->assertOk();
 
         $response->assertJson(
-            fn (AssertableJson $json) => $json
+            fn(AssertableJson $json) => $json
             ->has('access_token')
             ->whereType('access_token', 'string')
             ->where('token_type', 'bearer')
             ->has('expires_in')
-            ->whereType('expires_in', 'integer')
+            ->whereType('expires_in', 'integer'),
         );
 
         $this->assertAuthenticated();
@@ -73,12 +73,12 @@ class AuthenticationTest extends TestCase
         $response->assertUnauthorized();
 
         $response->assertJson(
-            fn (AssertableJson $json) => $json
+            fn(AssertableJson $json) => $json
             ->has('error')
             ->where('error', 'InvalidCredentialsException')
             ->has('message')
             ->whereType('message', 'string')
-            ->etc()
+            ->etc(),
         );
 
         $this->assertGuest();
@@ -107,10 +107,10 @@ class AuthenticationTest extends TestCase
         $response->assertAccepted();
 
         $response->assertJson(
-            fn (AssertableJson $json) => $json
+            fn(AssertableJson $json) => $json
             ->has('message')
             ->whereType('message', 'string')
-            ->where('message', 'Successfully logged out')
+            ->where('message', 'Successfully logged out'),
         );
 
         $this->assertGuest();
@@ -136,12 +136,12 @@ class AuthenticationTest extends TestCase
         $response->assertOk();
 
         $response->assertJson(
-            fn (AssertableJson $json) => $json
+            fn(AssertableJson $json) => $json
             ->has('message')
             ->whereType('message', 'string')
             ->where('message', 'Current user fetched successfully')
             ->has('user')
-            ->whereType('user', 'array')
+            ->whereType('user', 'array'),
         );
     }
 }

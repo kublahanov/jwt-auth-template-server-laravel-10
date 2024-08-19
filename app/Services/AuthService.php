@@ -111,7 +111,7 @@ class AuthService implements AuthServiceInterface
         if (!$request->hasValidSignature()) {
             $this->respondWithException(
                 'Invalid verification link or signature',
-                InvalidEmailVerificationException::class
+                InvalidEmailVerificationException::class,
             );
         }
 
@@ -140,7 +140,7 @@ class AuthService implements AuthServiceInterface
 
             return $this->respondWithException(
                 "Too many attempts (wait $seconds second(s))",
-                TooManyAttemptsException::class
+                TooManyAttemptsException::class,
             );
         }
 
@@ -151,7 +151,7 @@ class AuthService implements AuthServiceInterface
             RateLimiter::hit($throttleKey);
 
             return $this->respondWithException(
-                exceptionClass: InvalidCredentialsException::class
+                exceptionClass: InvalidCredentialsException::class,
             );
         }
 
@@ -223,7 +223,7 @@ class AuthService implements AuthServiceInterface
          */
 
         return Password::sendResetLink(
-            $request->only('email')
+            $request->only('email'),
         );
     }
 
@@ -251,7 +251,7 @@ class AuthService implements AuthServiceInterface
                 ])->save();
 
                 event(new PasswordReset($user));
-            }
+            },
         );
     }
 

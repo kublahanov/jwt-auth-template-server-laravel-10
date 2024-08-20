@@ -4,15 +4,15 @@
 <a href="https://laravel.com" target="_blank"><img src="https://github.com/kublahanov/laravel-10-template/raw/master/public/logos/logo_laravel_002.png" alt="Laravel Logo"></a>
 </td>
 <td style="border: none">
-<a href="https://restfulapi.net" target="_blank"><img src="https://github.com/kublahanov/laravel-10-template/raw/master/public/logos/logo_rest-api_001.png" alt="REST API"></a>
+<a href="https://jwt-auth.readthedocs.io" target="_blank"><img src="https://github.com/kublahanov/laravel-10-template/raw/master/public/logos/logo_jwt_001.png" alt="JWT auth"></a>
 </td>
 <td style="border: none">
-<a href="https://jwt-auth.readthedocs.io" target="_blank"><img src="https://github.com/kublahanov/laravel-10-template/raw/master/public/logos/logo_jwt_001.png" alt="JWT auth"></a>
+<a href="https://restfulapi.net" target="_blank"><img src="https://github.com/kublahanov/laravel-10-template/raw/master/public/logos/logo_rest-api_001.png" alt="REST API"></a>
 </td>
 </tr>
 </table>
 
-# Laravel 10 + JWT-auth REST API Template
+# JWT-auth REST API (server) template based on Laravel 10
 
 ![Laravel](https://img.shields.io/badge/Laravel-10.x-red)
 ![JWT Auth](https://img.shields.io/badge/JWT-Auth-blue)
@@ -107,10 +107,10 @@ Your application should now be accessible at `http://localhost:8000`.
 
 ```json
 {
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "password": "password",
-    "password_confirmation": "password"
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "password",
+  "password_confirmation": "password"
 }
 ```
 
@@ -118,14 +118,14 @@ Response:
 
 ```json
 {
-    "message": "User registered successfully, please check your email for verification link",
-    "user": {
-        "name": "John Doe",
-        "email": "john.doe@example.com",
-        "updated_at": "2024-06-26T18:03:49.000000Z",
-        "created_at": "2024-06-26T18:03:49.000000Z",
-        "id": 1
-    }
+  "message": "User registered successfully, please check your email for verification link",
+  "user": {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "updated_at": "2024-06-26T18:03:49.000000Z",
+    "created_at": "2024-06-26T18:03:49.000000Z",
+    "id": 1
+  }
 }
 ```
 
@@ -135,8 +135,8 @@ Response:
 
 ```json
 {
-    "email": "john.doe@example.com",
-    "password": "password"
+  "email": "john.doe@example.com",
+  "password": "password"
 }
 ```
 
@@ -144,9 +144,9 @@ Response:
 
 ```json
 {
-    "access_token": "your-jwt-token",
-    "token_type": "bearer",
-    "expires_in": 3600
+  "access_token": "your-jwt-token",
+  "token_type": "bearer",
+  "expires_in": 3600
 }
 ```
 

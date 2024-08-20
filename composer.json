@@ -1,10 +1,11 @@
 {
-    "name": "laravel/laravel",
-    "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "name": "kublahanov/jwt-auth-template-server-laravel-10",
+    "type": "project-template",
+    "description": "Template for REST API with JWT-auth based on Laravel 10.",
     "keywords": [
-        "laravel",
-        "framework"
+        "laravel-10",
+        "jwt-auth",
+        "rest-api"
     ],
     "license": "MIT",
     "require": {

@@ -9,6 +9,7 @@ use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\SendResetPasswordLinkRequest;
 use App\Interfaces\AuthServiceInterface;
 use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -33,6 +34,7 @@ class AuthController extends ApiController
             'login',
             'sendResetPasswordLink',
             'resetPassword',
+            'options',
         ]]);
     }
 
@@ -184,5 +186,70 @@ class AuthController extends ApiController
             'Password reset successfully',
             status: Response::HTTP_ACCEPTED,
         );
+    }
+
+    /**
+     * Index list of rules for all controller routes.
+     *
+     * @return array[]
+     */
+    public function options(): array
+    {
+        return [
+            [
+                'name' => AuthService::AUTH_ROUTES_NAMES['register'],
+                'path' => '/api/auth/register',
+                'method' => 'POST',
+                'rules' => RegisterRequest::getRulesArray(),
+            ],
+            [
+                'name' => AuthService::AUTH_ROUTES_NAMES['verify-email'],
+                'path' => '/api/auth/verify-email/{id}/{hash}',
+                'method' => 'GET',
+                'rules' => [],
+            ],
+            [
+                'name' => AuthService::AUTH_ROUTES_NAMES['login'],
+                'path' => '/api/auth/login',
+                'method' => 'POST',
+                'rules' => LoginRequest::getRulesArray(),
+            ],
+            [
+                'name' => AuthService::AUTH_ROUTES_NAMES['logout'],
+                'path' => '/api/auth/logout',
+                'method' => 'POST',
+                'rules' => [],
+            ],
+            [
+                'name' => AuthService::AUTH_ROUTES_NAMES['refresh'],
+                'path' => '/api/auth/refresh',
+                'method' => 'POST',
+                'rules' => [],
+            ],
+            [
+                'name' => AuthService::AUTH_ROUTES_NAMES['me'],
+                'path' => '/api/auth/me',
+                'method' => 'GET',
+                'rules' => [],
+            ],
+            [
+                'name' => AuthService::AUTH_ROUTES_NAMES['send-reset-password-link'],
+                'path' => '/api/auth/send-reset-password-link',
+                'method' => 'POST',
+                'rules' => SendResetPasswordLinkRequest::getRulesArray(),
+            ],
+            [
+                'name' => AuthService::AUTH_ROUTES_NAMES['reset-password'],
+                'path' => '/api/auth/reset-password',
+                'method' => 'POST',
+                'rules' => ResetPasswordRequest::getRulesArray(),
+            ],
+            [
+                'name' => AuthService::AUTH_ROUTES_NAMES['options'],
+                'path' => '/api/auth/',
+                'method' => 'OPTIONS',
+                'rules' => [],
+            ],
+        ];
     }
 }

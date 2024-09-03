@@ -27,6 +27,14 @@ class SendResetPasswordLinkRequest extends FormRequest
      */
     public function rules(): array
     {
+        return static::getRulesArray();
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function getRulesArray(): array
+    {
         // $userTableName = User::getTableName();
 
         return [

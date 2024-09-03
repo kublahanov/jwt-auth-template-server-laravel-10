@@ -47,4 +47,7 @@ Route::prefix('auth')->controller(AuthController::class)->group(function ($route
         ->name(AuthService::AUTH_ROUTES_NAMES['send-reset-password-link']);
     Route::post('reset-password', 'resetPassword')
         ->name(AuthService::AUTH_ROUTES_NAMES['reset-password']);
+
+    Route::options('/', 'options')
+        ->name(AuthService::AUTH_ROUTES_NAMES['options']);
 });

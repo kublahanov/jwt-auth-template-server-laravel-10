@@ -1,1 +1,1 @@
-./vendor/bin/sail stop
+./vendor/bin/sail down

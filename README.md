@@ -51,7 +51,13 @@ If not using [Laravel Sail](https://laravel.com/docs/10.x/sail):
 
 - MySQL or another supported database.
 
-### Installation
+### One-step installation
+
+Run this shell script in the root of the project:
+
+`./setup.sh`
+
+### Manually installation
 
 1. Clone the repository:
 

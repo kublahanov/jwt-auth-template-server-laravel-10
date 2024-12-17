@@ -32,6 +32,7 @@ class AuthController extends ApiController
             'register',
             'verifyEmail',
             'login',
+            // 'refresh',
             'sendResetPasswordLink',
             'resetPassword',
             'options',

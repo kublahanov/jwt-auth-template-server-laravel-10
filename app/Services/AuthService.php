@@ -42,7 +42,7 @@ class AuthService implements AuthServiceInterface
         'refresh' => 'auth.refresh',
         'send-reset-password-link' => 'auth.send-reset-password-link',
         'reset-password' => 'auth.reset-password',
-        'options' => 'auth.options',
+        'config' => 'auth.config',
     ];
 
     public const VERIFICATION_EMAIL_SUBJECT = 'Вершки и корешки - Завершение регистрации';

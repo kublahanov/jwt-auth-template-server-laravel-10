@@ -48,6 +48,6 @@ Route::prefix('auth')->controller(AuthController::class)->group(function ($route
     Route::post('reset-password', 'resetPassword')
         ->name(AuthService::AUTH_ROUTES_NAMES['reset-password']);
 
-    Route::options('/', 'options')
-        ->name(AuthService::AUTH_ROUTES_NAMES['options']);
+    Route::get('/', 'config')
+        ->name(AuthService::AUTH_ROUTES_NAMES['config']);
 });

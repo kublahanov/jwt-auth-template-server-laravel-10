@@ -2,7 +2,7 @@
     <x-top-menu/>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
-        <x-card-link href="/api">
+        <x-card-link href="/api-list">
             <x-slot:icon>api</x-slot:icon>
             <x-slot:title>REST API list</x-slot:title>
             <x-slot:text>

@@ -23,7 +23,7 @@ Route::get('/', function () {
 /**
  * Output routes list in HTML or JSON.
  */
-Route::get('/api', function (Request $request) {
+Route::get('/api-list', function (Request $request) {
     $routes = collect(Route::getRoutes())
         ->filter(fn(RouteAlias $route) => str_starts_with($route->uri(), 'api'))
         ->filter(fn(RouteAlias $route) => !empty($route->getName()))

@@ -32,7 +32,6 @@ class AuthController extends ApiController
             'register',
             'verifyEmail',
             'login',
-            // 'refresh',
             'sendResetPasswordLink',
             'resetPassword',
             'options',
@@ -194,7 +193,7 @@ class AuthController extends ApiController
      *
      * @return array[]
      */
-    public function options(): array
+    public function config(): array
     {
         return [
             [
@@ -246,9 +245,9 @@ class AuthController extends ApiController
                 'rules' => ResetPasswordRequest::getRulesArray(),
             ],
             [
-                'name' => AuthService::AUTH_ROUTES_NAMES['options'],
-                'path' => '/api/auth/',
-                'method' => 'OPTIONS',
+                'name' => AuthService::AUTH_ROUTES_NAMES['config'],
+                'path' => '/api/auth/config',
+                'method' => 'GET',
                 'rules' => [],
             ],
         ];

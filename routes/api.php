@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TestController;
+use App\Http\Controllers\ApiController;
 use App\Services\AuthService;
 use Illuminate\Support\Facades\Route;
 
@@ -17,14 +18,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 /**
- * TODO: Test.
+ * TODO: Test (/api/test).
  */
-Route::get('/test/migrations', [TestController::class, 'migrations'])
-    // ->name('test.migrations')
-;
+Route::get('/test/migrations', [TestController::class, 'migrations']); // ->name('test.migrations')
 
 /**
- * AuthController.
+ * IndexController (/api).
+ */
+Route::prefix('')->controller(ApiController::class)->group(function ($router) {
+    Route::get('', 'ping')
+        ->name('ping');
+});
+
+/**
+ * AuthController (/api/auth).
  */
 Route::prefix('auth')->controller(AuthController::class)->group(function ($router) {
     Route::post('register', 'register')
@@ -48,6 +55,6 @@ Route::prefix('auth')->controller(AuthController::class)->group(function ($route
     Route::post('reset-password', 'resetPassword')
         ->name(AuthService::AUTH_ROUTES_NAMES['reset-password']);
 
-    Route::get('/', 'config')
+    Route::get('config', 'config')
         ->name(AuthService::AUTH_ROUTES_NAMES['config']);
 });

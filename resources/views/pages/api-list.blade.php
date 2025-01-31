@@ -26,11 +26,11 @@ endif;
         </x-top-menu-link>
 
         @if (request()->has('json'))
-            <x-top-menu-link href="{{ url('/api') }}">
+            <x-top-menu-link href="{{ url('/api-list') }}">
                 HTML-format
             </x-top-menu-link>
         @else
-            <x-top-menu-link href="{{ url('/api') . '?json' }}">
+            <x-top-menu-link href="{{ url('/api-list') . '?json' }}">
                 JSON-format
             </x-top-menu-link>
         @endif

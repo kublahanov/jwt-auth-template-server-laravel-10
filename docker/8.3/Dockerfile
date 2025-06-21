@@ -75,6 +75,11 @@ RUN apt-get purge -y php8.4* && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Установка Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && chmod +x /usr/local/bin/composer \
+    && ln -s /usr/local/bin/composer /usr/bin/composer
+
 # Установка прав для работы на порту 80
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.3
 

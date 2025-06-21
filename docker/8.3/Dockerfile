@@ -28,7 +28,12 @@ RUN apt-get update \
     && echo "deb [signed-by=/etc/apt/keyrings/ppa_ondrej_php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu jammy main" > /etc/apt/sources.list.d/ppa_ondrej_php.list \
     && apt-get update
 
-# Установка PHP 8.3 и зависимостей
+# Явное удаление всех версий PHP перед установкой
+RUN apt-get remove -y php* && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get update
+
+# Установка только PHP 8.3 и его модулей
 RUN apt-get install -y --no-install-recommends \
         php8.3 \
         php8.3-cli \
@@ -63,6 +68,12 @@ RUN apt-get install -y --no-install-recommends \
     && update-alternatives --set phar.phar /usr/bin/phar.phar8.3 \
     && apt-mark hold php8.3* \
     && echo "php8.3 hold" | dpkg --set-selections
+
+# Явное удаление возможных остатков PHP 8.4
+RUN apt-get purge -y php8.4* && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Установка прав для работы на порту 80
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.3

@@ -1,18 +1,15 @@
 #!/bin/bash
 
-# Making .env from .env.example, if not yet
-#if [ ! -f .env ]; then
-#    cp .env.example .env
-#fi
+# Копирование .env
+if [ ! -f ".env" ]; then
+    cp .env.example .env
+fi
 
-# Starting Docker stack
-./vendor/bin/sail up -d
+# Генерация ключа приложения
+docker compose exec laravel_10-jwt_app php artisan key:generate
 
-# Setup composer dependencies
-./vendor/bin/sail composer install
+# Запуск миграций
+docker compose exec laravel_10-jwt_app php artisan migrate --seed
 
-# Generating application key
-#./vendor/bin/sail artisan key:generate --ansi
-
-# Starting migrations and seeds
-./vendor/bin/sail artisan migrate --seed
+# Установка прав
+#docker compose exec laravel chmod -R 775 storage bootstrap/cache

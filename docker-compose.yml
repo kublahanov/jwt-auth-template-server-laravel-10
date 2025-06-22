@@ -1,24 +1,24 @@
 services:
-    laravel.test:
+    laravel_10-jwt_app:
         build:
             context: ./docker/8.3
             dockerfile: Dockerfile
             args:
                 WWWGROUP: ${WWWGROUP:-1000}
                 WWWUSER: ${WWWUSER:-1000}
-        image: sail-8.3/app
+        image: laravel_10-jwt_app
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
             - '${APP_PORT:-80}:80'
         environment:
-            WWWUSER: '${WWWUSER}'
-            LARAVEL_SAIL: 1
+            WWWUSER: '${WWWUSER:-1000}'
+            # LARAVEL_SAIL: 1
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
         networks:
-            - sail
+            - laravel_10-jwt_app
         depends_on:
             - mysql
             - redis
@@ -29,23 +29,23 @@ services:
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'
         environment:
-            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-password}'
             MYSQL_ROOT_HOST: '%'
-            MYSQL_DATABASE: '${DB_DATABASE}'
-            MYSQL_USER: '${DB_USERNAME}'
-            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_DATABASE: '${DB_DATABASE:-laravel_10-jwt_app}'
+            MYSQL_USER: '${DB_USERNAME:-laravel_10-jwt_app}'
+            MYSQL_PASSWORD: '${DB_PASSWORD:-password}'
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
         volumes:
-            - 'sail-mysql:/var/lib/mysql'
+            - 'laravel_10-jwt_app-mysql:/var/lib/mysql'
             - './docker/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
         networks:
-            - sail
+            - laravel_10-jwt_app
         healthcheck:
             test:
                 - CMD
                 - mysqladmin
                 - ping
-                - '-p${DB_PASSWORD}'
+                - '-p${DB_PASSWORD:-password}'
             retries: 3
             timeout: 5s
 
@@ -54,9 +54,9 @@ services:
         ports:
             - '${FORWARD_REDIS_PORT:-6379}:6379'
         volumes:
-            - 'sail-redis:/data'
+            - 'laravel_10-jwt_app-redis:/data'
         networks:
-            - sail
+            - laravel_10-jwt_app
         healthcheck:
             test:
                 - CMD
@@ -71,14 +71,14 @@ services:
             - '${FORWARD_MAILPIT_PORT:-1025}:1025'
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
-            - sail
+            - laravel_10-jwt_app
 
 networks:
-    sail:
+    laravel_10-jwt_app:
         driver: bridge
 
 volumes:
-    sail-mysql:
+    laravel_10-jwt_app-mysql:
         driver: local
-    sail-redis:
+    laravel_10-jwt_app-redis:
         driver: local

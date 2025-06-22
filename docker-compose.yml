@@ -13,7 +13,6 @@ services:
             - '${APP_PORT:-80}:80'
         environment:
             WWWUSER: '${WWWUSER:-1000}'
-            # LARAVEL_SAIL: 1
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
@@ -41,11 +40,7 @@ services:
         networks:
             - laravel_10-jwt_app
         healthcheck:
-            test:
-                - CMD
-                - mysqladmin
-                - ping
-                - '-p${DB_PASSWORD:-password}'
+            test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD:-password}"]
             retries: 3
             timeout: 5s
 
@@ -58,10 +53,7 @@ services:
         networks:
             - laravel_10-jwt_app
         healthcheck:
-            test:
-                - CMD
-                - redis-cli
-                - ping
+            test: ["CMD", "redis-cli", "ping"]
             retries: 3
             timeout: 5s
 

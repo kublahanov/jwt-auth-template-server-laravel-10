@@ -28,4 +28,7 @@ docker compose exec -T laravel_10-jwt_app bash -c "
 
     # Миграции и сиды
     php artisan migrate --force --seed
+
+    # Запуск веб-сервера
+    php artisan serve
 "

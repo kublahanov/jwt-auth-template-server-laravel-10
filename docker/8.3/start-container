@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ ! -z "$WWWUSER" ]; then
-    usermod -u $WWWUSER sail
+    usermod -u $WWWUSER app
 fi
 
 if [ ! -d /.composer ]; then
@@ -10,8 +10,16 @@ fi
 
 chmod -R ugo+rw /.composer
 
-if [ $# -gt 0 ]; then
-    exec gosu $WWWUSER "$@"
-else
-    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
-fi
+# Установка прав на volume
+chown -R app:app /var/www/html
+chmod -R 775 /var/www/html/storage
+
+exec gosu app supervisord -c /etc/supervisor/conf.d/supervisord.conf
+
+#if [ $# -gt 0 ]; then
+#    exec gosu $WWWUSER "$@"
+#else
+#    # Проверка прав для Supervisor
+#    chown -R app:app /var/log/supervisor /var/run/supervisor
+#    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+#fi

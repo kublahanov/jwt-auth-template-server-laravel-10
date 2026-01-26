@@ -1,16 +1,24 @@
 #!/bin/bash
 
-# Проверяем версию PHP
-#CURRENT_PHP=$(php -v | head -n 1 | cut -d' ' -f2 | cut -d'.' -f1-2)
-#if [ "$CURRENT_PHP" != "8.3" ]; then
-#    echo "ERROR: Wrong PHP version detected ($CURRENT_PHP). Forcing PHP 8.3..."
-#    update-alternatives --set php /usr/bin/php8.3
-#    exec php "$0" "$@"
-#fi
+# Установка прав
+chown -R app:app /var/www/html
+chmod -R 775 /var/www/html/storage
 
-# Создаем директории, если их нет (для работы без volume)
-#mkdir -p /var/www/html/storage/{logs,framework/cache,framework/views}
-#chown -R sail:sail /var/www/html/storage
+# Создание необходимых директорий
+mkdir -p /var/log/supervisor /var/run/supervisor
+chown -R app:app /var/log/supervisor /var/run/supervisor
+
+# Ожидание MySQL (альтернатива без nc)
+#while ! php -r "new PDO('mysql:host=mysql;dbname=${DB_DATABASE:-laravel}', '${DB_USERNAME:-sail}', '${DB_PASSWORD:-password}');" >/dev/null 2>&1; do
+#    echo 'Waiting for MySQL...'
+#    sleep 1
+#done
+
+# Ожидание Redis
+#while ! php -r "(new Redis())->connect('redis', 6379);" >/dev/null 2>&1; do
+#    echo 'Waiting for Redis...'
+#    sleep 1
+#done
 
 # Если запускаем через docker run без параметров
 if [ "$1" = "bash" ]; then

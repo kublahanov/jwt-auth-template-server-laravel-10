@@ -4,8 +4,6 @@ LABEL maintainer="Roman Kondrashov"
 
 ARG WWWUSER=1000
 ARG WWWGROUP=1000
-#ARG NODE_VERSION=20
-#ARG POSTGRES_VERSION=15
 
 WORKDIR /var/www/html
 
@@ -84,34 +82,18 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Установка прав для работы на порту 80
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.3
 
-# Установка Node.js и других зависимостей
-#RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-#    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_VERSION.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
-#    && apt-get update \
-#    && apt-get install -y nodejs \
-#    && npm install -g npm \
-#    && npm install -g pnpm \
-#    && npm install -g bun \
-#    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /etc/apt/keyrings/yarn.gpg >/dev/null \
-#    && echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
-#    && curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/keyrings/pgdg.gpg >/dev/null \
-#    && echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] http://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-#    && apt-get update \
-#    && apt-get install -y yarn \
-#    && apt-get install -y mysql-client \
-#    && apt-get install -y postgresql-client-$POSTGRES_VERSION \
-#    && apt-get -y autoremove \
-#    && apt-get clean \
-#    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-RUN apt-get -y autoremove \
-    && apt-get -y autoclean
-
 # Создание пользователя и групп
-RUN groupadd --force -g $WWWGROUP app
-RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 app
+RUN groupadd --force -g ${WWWGROUP:-1000} app && \
+    useradd -ms /bin/bash --no-user-group -g ${WWWGROUP:-1000} -u ${WWWUSER:-1000} app && \
+    usermod -aG app app && \
+    echo "app ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Создание необходимых директорий
+RUN mkdir -p /var/log/supervisor /var/run/supervisor && \
+    chown -R app:app /var/log/supervisor && \
+    chown -R app:app /var/run/supervisor && \
+    chmod -R 775 /var/log/supervisor /var/run/supervisor
+
 RUN mkdir -p /var/www/html/storage/{logs,framework/cache,framework/views} \
     && chown -R app:app /var/www/html/storage
 
